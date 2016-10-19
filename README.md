@@ -8,7 +8,7 @@
 |---| ----- | -------- | ---------- |
 |1|[Two Sum](https://leetcode.com/problems/two-sum/)| [JavaScript](./leetcode/twoSum-leetcode.js)|easy|
 |102|[Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)| [JavaScript](./leetcode/102-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|
-|103|[Binary Tree Zigzag level Order](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/| [JavaScript](./leetcode/103-Binary-tree-Zigzag-Level-Order-Traversal.js)|easy|
+|103|[Binary Tree Zigzag level Order](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/)| [JavaScript](./leetcode/103-Binary-tree-Zigzag-Level-Order-Traversal.js)|easy|
 |107|[Binary Tree Level Order](https://leetcode.com/problems/binary-tree-level-order-traversal-ii/)| [JavaScript](./leetcode/107-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|
 |206|[reverse-link-list](https://leetcode.com/problems/reverse-linked-list/) | [JavaScript](./leetcode/reverse-link-list-leetcode.js)|easy|
 |202|[Happy Number](https://leetcode.com/problems/happy-number/)| [JavaScript](./leetcode/happy-numbers-leetcode.js)|easy|
