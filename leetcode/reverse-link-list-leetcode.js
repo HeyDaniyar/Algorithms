@@ -10,6 +10,7 @@
  * @param {ListNode} head
  * @return {ListNode}
  */
+ //
 var reverseList = function(head) {
   var prev = null;
   var curr = head;
@@ -22,8 +23,7 @@ var reverseList = function(head) {
   return prev;
 };
 
-//迭代法
-
+//递归法
 var reverseList_recursive = function(head) {
   if (!head) {
     return head;
