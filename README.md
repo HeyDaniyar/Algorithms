@@ -7,7 +7,9 @@
 | # | Title | Solution | Difficulty |
 |---| ----- | -------- | ---------- |
 |1|[Two Sum](https://leetcode.com/problems/two-sum/)| [JavaScript](./leetcode/twoSum-leetcode.js)|easy|
+|6|[ZigZag Conversion](https://leetcode.com/problems/zigzag-conversion/)| [JavaScript](./leetcode/06-zig-zag-leetcode.js)|easy|
 |19|[Remove NthNode From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list)| [JavaScript](./leetcode/19-RemoveNthNodeFromEndofList-leetcode.js)|easy|
+|24|[Swap Nodes in Pairs](https://leetcode.com/problems/swap-nodes-in-pairs/)|[JavaScript](./leetcode/24-swapNodesInPairs-leetcode.js)|easy|
 |102|[Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)| [JavaScript](./leetcode/102-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|
 |103|[Binary Tree Zigzag level Order](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/)| [JavaScript](./leetcode/103-Binary-tree-Zigzag-Level-Order-Traversal.js)|easy|
 |107|[Binary Tree Level Order](https://leetcode.com/problems/binary-tree-level-order-traversal-ii/)| [JavaScript](./leetcode/107-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|
@@ -15,6 +17,7 @@
 |202|[Happy Number](https://leetcode.com/problems/happy-number/)| [JavaScript](./leetcode/happy-numbers-leetcode.js)|easy|
 |226|[ Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/)| [JavaScript](./leetcode/inverBinaryTree-leetcode.js)|easy|
 |437|[ Path Sum 3](https://leetcode.com/problems/path-sum-iii/)| [JavaScript](./leetcode/437-PathSumIII-leetcode.js)|easy|
+|451|[Sort Characters By Frequency](https://leetcode.com/problems/sort-characters-by-frequency/)|[JavaScript](./leetcode/451-Sort-Characters-leetcode.js)|easy|
 
 ### CodeWar
 
