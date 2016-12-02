@@ -8,6 +8,8 @@
 |---| ----- | -------- | ---------- |
 |1|[Two Sum](https://leetcode.com/problems/two-sum/)| [JavaScript](./leetcode/twoSum-leetcode.js)|easy|
 |6|[ZigZag Conversion](https://leetcode.com/problems/zigzag-conversion/)| [JavaScript](./leetcode/06-zig-zag-leetcode.js)|easy|
+|13|[Roman to Integer](https://leetcode.com/problems/roman-to-integer/)| [JavaScript](./leetcode/13-RomanToInteger.js)|easy|
+|14|[Logest Common Prefix](https://leetcode.com/problems/longest-common-prefix/) | [JavaScript](./leetcode/14-loogestCommonPrefix-leetcode.js)|easy|
 |19|[Remove NthNode From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list)| [JavaScript](./leetcode/19-RemoveNthNodeFromEndofList-leetcode.js)|easy|
 |24|[Swap Nodes in Pairs](https://leetcode.com/problems/swap-nodes-in-pairs/)|[JavaScript](./leetcode/24-swapNodesInPairs-leetcode.js)|easy|
 |102|[Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)| [JavaScript](./leetcode/102-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|

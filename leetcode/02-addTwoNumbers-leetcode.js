@@ -59,24 +59,21 @@ function converToList(num) {
 var addTwoNumbers = function(l1, l2) {
   if (!l1 && !l2) return new ListNode(0);
 
-  let carry = 0,
-    currNode = null,
-    firstNode = null;
+  let currNode = null;
+  let firstNode = null;
 
   while (l1 || l2) {
+
     let a = (l1) ? l1.val : 0;
     let b = (l2) ? l2.val : 0;
-    let sum = a + b + carry;
 
-    if (sum >= 10) {
-      sum = sum % 10;
-      carry = 1;
-    } else {
-      carry = 0;
-    }
+    let sum = a + b;
+
+
 
     let newNode = new ListNode(sum);
 
+    //check if this is the first node. currNode and firstNode will both be null
     if (!currNode) {
       firstNode = newNode;
       currNode = newNode;
@@ -89,11 +86,6 @@ var addTwoNumbers = function(l1, l2) {
     l1 = (l1) ? l1.next : l1;
     l2 = (l2) ? l2.next : l2;
 
-    if (carry) {
-      let newNode = new ListNode(carry);
-      currNode.next = newNode;
-      currNode = newNode;
-    }
-    return firstNode;
   }
+  return firstNode;
 }
