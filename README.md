@@ -11,13 +11,20 @@
 |13|[Roman to Integer](https://leetcode.com/problems/roman-to-integer/)| [JavaScript](./leetcode/13-RomanToInteger.js)|easy|
 |14|[Logest Common Prefix](https://leetcode.com/problems/longest-common-prefix/) | [JavaScript](./leetcode/14-loogestCommonPrefix-leetcode.js)|easy|
 |19|[Remove NthNode From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list)| [JavaScript](./leetcode/19-RemoveNthNodeFromEndofList-leetcode.js)|easy|
+|20|[Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) |[JavaScript](./leetcode/20-validParentheses-leetcode.js)|easy|
+|21|[Merge Two Sorted Listt](https://leetcode.com/problems/merge-two-sorted-lists/)| [JavaScript](./leetcode/21-mergeTwoSortedLists-leetcode.js)|easy|
 |24|[Swap Nodes in Pairs](https://leetcode.com/problems/swap-nodes-in-pairs/)|[JavaScript](./leetcode/24-swapNodesInPairs-leetcode.js)|easy|
+|26|[Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)|[JavaScript](./leetcode/26-removeDuplicatesFromSortedArray-leetcode.js)|easy|
+|28|[Implement strStr()](https://leetcode.com/problems/implement-strstr/)|[JavaScript](./leetcode/28-implementStrstr()-leetcode.js)|easy|
+|58|[Length of Last Word](https://leetcode.com/problems/length-of-last-word/)|[JavaScript](./leetcode/58-lengthOfLastWord-leetcode.js)|easy|
 |102|[Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)| [JavaScript](./leetcode/102-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|
 |103|[Binary Tree Zigzag level Order](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/)| [JavaScript](./leetcode/103-Binary-tree-Zigzag-Level-Order-Traversal.js)|easy|
 |107|[Binary Tree Level Order](https://leetcode.com/problems/binary-tree-level-order-traversal-ii/)| [JavaScript](./leetcode/107-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|
 |206|[reverse-link-list](https://leetcode.com/problems/reverse-linked-list/) | [JavaScript](./leetcode/reverse-link-list-leetcode.js)|easy|
 |202|[Happy Number](https://leetcode.com/problems/happy-number/)| [JavaScript](./leetcode/happy-numbers-leetcode.js)|easy|
 |226|[ Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/)| [JavaScript](./leetcode/inverBinaryTree-leetcode.js)|easy|
+|383|[Ransom Note](https://leetcode.com/problems/ransom-note/)|[JavaScript](./leetcode/383-ransomeNote-leetcode.md)|easy|
+|434|[Number of Segments in a String](https://leetcode.com/problems/number-of-segments-in-a-string/)|[JavaScript](./leetcode/434-numberOfSegmentsInAString-leetcode.md)|easy|
 |437|[ Path Sum 3](https://leetcode.com/problems/path-sum-iii/)| [JavaScript](./leetcode/437-PathSumIII-leetcode.js)|easy|
 |451|[Sort Characters By Frequency](https://leetcode.com/problems/sort-characters-by-frequency/)|[JavaScript](./leetcode/451-Sort-Characters-leetcode.js)|easy|
 
