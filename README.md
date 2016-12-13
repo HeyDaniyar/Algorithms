@@ -4,8 +4,8 @@
 
 
 ### leetcode
-| # | Title | Solution | Difficulty |
-|---| ----- | -------- | ---------- |
+| # | Title | Solution | Difficulty | Tag |
+|---| ----- | -------- | ---------- | --- |
 |1|[Two Sum](https://leetcode.com/problems/two-sum/)| [JavaScript](./leetcode/twoSum-leetcode.js)|easy|
 |6|[ZigZag Conversion](https://leetcode.com/problems/zigzag-conversion/)| [JavaScript](./leetcode/06-zig-zag-leetcode.js)|easy|
 |13|[Roman to Integer](https://leetcode.com/problems/roman-to-integer/)| [JavaScript](./leetcode/13-RomanToInteger.js)|easy|
@@ -20,13 +20,18 @@
 |102|[Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)| [JavaScript](./leetcode/102-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|
 |103|[Binary Tree Zigzag level Order](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/)| [JavaScript](./leetcode/103-Binary-tree-Zigzag-Level-Order-Traversal.js)|easy|
 |107|[Binary Tree Level Order](https://leetcode.com/problems/binary-tree-level-order-traversal-ii/)| [JavaScript](./leetcode/107-Binary-Tree-Level-Order-Traversal-leetcode.js)|easy|
+|125|[Valid Palindrome](https://leetcode.com/problems/valid-palindrome/)[JavaScript](./leetcode/125-validPalindrome-leetcode.md)|easy|string|
+|165|[Compare Version Number](https://leetcode.com/problems/compare-version-numbers/)|[JavaScript](./leetcode/165-compareVersionNumbers-leetocode.md)|easy|string|
 |206|[reverse-link-list](https://leetcode.com/problems/reverse-linked-list/) | [JavaScript](./leetcode/reverse-link-list-leetcode.js)|easy|
 |202|[Happy Number](https://leetcode.com/problems/happy-number/)| [JavaScript](./leetcode/happy-numbers-leetcode.js)|easy|
 |226|[ Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/)| [JavaScript](./leetcode/inverBinaryTree-leetcode.js)|easy|
+|344|[ Reverse String](https://leetcode.com/problems/reverse-string/)|[JavaScript](./leetcode/344-reverseString-leetcode.md)|easy| string|
+|345|[Reverse Vowels of a String ](https://leetcode.com/problems/reverse-vowels-of-a-string/)|[JavaScript](./leetcpde/345-reverseVowelsOfAString-leetcode.md)|easy||string|
 |383|[Ransom Note](https://leetcode.com/problems/ransom-note/)|[JavaScript](./leetcode/383-ransomeNote-leetcode.md)|easy|
 |434|[Number of Segments in a String](https://leetcode.com/problems/number-of-segments-in-a-string/)|[JavaScript](./leetcode/434-numberOfSegmentsInAString-leetcode.md)|easy|
 |437|[ Path Sum 3](https://leetcode.com/problems/path-sum-iii/)| [JavaScript](./leetcode/437-PathSumIII-leetcode.js)|easy|
 |451|[Sort Characters By Frequency](https://leetcode.com/problems/sort-characters-by-frequency/)|[JavaScript](./leetcode/451-Sort-Characters-leetcode.js)|easy|
+|468|[Validate IP Address](https://leetcode.com/problems/validate-ip-address/)[JavaScript](./leetcode/468-validateIpAddress-leetcode.md)|medium|string|
 
 ### CodeWar
 
