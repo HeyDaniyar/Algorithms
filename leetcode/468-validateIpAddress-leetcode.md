@@ -6,7 +6,7 @@
 
 直接上代码：
 
-```JavaScript
+```javaScript
 /**
  * @param {string} IP
  * @return {string}
