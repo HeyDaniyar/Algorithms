@@ -34,12 +34,19 @@
 |198|[House Robal](https://leetcode.com/problems/house-robber/?tab=Description)|[JavaScript](./leetcode/198-houseRobber-leetcode.md)|Easy|DP|
 |206|[reverse-link-list](https://leetcode.com/problems/reverse-linked-list/) | [JavaScript](./leetcode/reverse-link-list-leetcode.js)|Easy|
 |202|[Happy Number](https://leetcode.com/problems/happy-number/)| [JavaScript](./leetcode/happy-numbers-leetcode.js)|Easy|
+|205|[Isomorphic Strings](https://leetcode.com/problems/isomorphic-strings/)|[JavaScript](./leetcode/205-IsomorphicStrings-leetcode.md)|Easy|Hash Table|
 |213|[houseRobberII](https://leetcode.com/problems/house-robber/?tab=Description)|[JavaScript](./leetcode/213-houseRobberII-leetcode.js)|Easy|DP|
 |226|[ Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/)| [JavaScript](./leetcode/inverBinaryTree-leetcode.js)|Easy|
 |227|[Basic Calculator2](https://leetcode.com/problems/basic-calculator-ii/)|[JavaScript](./leetcode/227-basicCalculator2-leetcode.js)|Medium||
+|242|[Valid Anagram](https://leetcode.com/problems/valid-anagram/?tab=Description)[JavaScript](./leetcode/242-ValidAnagram-leetcode.md)|Easy|Hash Table|
+|290|[World Pattern](https://leetcode.com/problems/word-pattern/)[JavaScript](./leetcode/290-WorldPattern-leetcode.md)|Easy|Hash Table|
 |344|[ Reverse String](https://leetcode.com/problems/reverse-String/)|[JavaScript](./leetcode/344-reverseString-leetcode.md)|Easy| String|
 |345|[Reverse Vowels of a String ](https://leetcode.com/problems/reverse-vowels-of-a-String/)|[JavaScript](./leetcpde/345-reverseVowelsOfAString-leetcode.md)|Easy||String|
+|349|[Intersection Of TwoArrays](https://leetcode.com/problems/intersection-of-two-arrays/)|[JavaScript](./leetcode/349-IntersectionOfTwoArrays-leetcode.md)]|Easy|
+|350|[IntersectionofTwoArraysII]Intersection Of TwoArrays 2 ](https://leetcode.com/problems/intersection-of-two-arraysII/)|[JavaScript](./leetcode/350-IntersectionofTwoArraysII-leetcode.md)]|Easy|
 |383|[Ransom Note](https://leetcode.com/problems/ransom-note/)|[JavaScript](./leetcode/383-ransomeNote-leetcode.md)|Easy|
+|389|[Find The Difference](https://leetcode.com/problems/find-the-difference)[JavaScript](./leetcode/389-findTheDifference-leetcode)|Easy|
+|409|[Longest Palindrome]()[JavaScript](./409-longestPalindromeleetcode-leetcode.md)|Easy|
 |434|[Number of Segments in a String](https://leetcode.com/problems/number-of-segments-in-a-String/)|[JavaScript](./leetcode/434-numberOfSegmentsInAString-leetcode.md)|Easy|
 |437|[ Path Sum 3](https://leetcode.com/problems/path-sum-iii/)| [JavaScript](./leetcode/437-PathSumIII-leetcode.js)|Easy|
 |447|[ Number of Boomerangs](https://leetcode.com/problems/number-of-boomerangs/?tab=Description)|[JavaScript](./leetcode/numberofBoomerangs.md)|Easy|HashTable|
