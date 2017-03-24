@@ -7,6 +7,7 @@ Two binary trees are considered equal if they are structurally identical and the
 ## Solution
 
 很简单的一套递归问题，前面想的有点复杂，不需要全部遍历。
+
 ```js
 /**
  * @param {TreeNode} p
@@ -21,6 +22,7 @@ var isSameTree = function(p, q) {
     }
     return false
 };
+
 
 
 ```

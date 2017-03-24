@@ -48,13 +48,13 @@ var inorderTraversal = function(root) {
     const list = [], stack = [];
     let node = root;
     while(node || stack.length > 0) {
-        while(node) {
-            stack.push(node);
-            node = node.left;
-        }
-            node = stack.pop();
-            list.push(node.val);
-            node = node.right;
+        if(node) {
+          stack.push(node);
+          node = node.left;
+        }else{
+          node = stack.pop();
+          list.push(node.val);
+          node = node.right;
        }
     return list
 };
