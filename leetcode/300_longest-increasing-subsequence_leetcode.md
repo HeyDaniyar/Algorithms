@@ -34,8 +34,39 @@ var lengthOfLIS = function(nums) {
     return Math.max.apply(null, dp)
 };
 ```
----
 ####视频链接
  Coin Changing Minimum Coins Dynamic Programming
 
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/CE2b_-XfVDk/0.jpg)](http://www.youtube.com/watch?v=CE2b_-XfVDk)
+
+
+## Follow Up
+
+如果不是求最长子序列的长度，而是求最长子序列的话呢？ 其实思想还是一样的，只不过dp表示的不再是最长子序列长度，而是最长子序列本身。详情看代码
+
+```js
+var lengthOfLIS = function(nums) {
+    if(!nums) return 0
+    if(nums.length === 1) return 1
+    let dp = [], max = 1,result = [];
+    for(let i = 0; i < nums.length; i++) {
+        dp[i] = [nums[i]];
+    }
+    for(let i = 1; i < nums.length; i++) {
+        for(let j = 0; j < i; j++) {
+            if(nums[i] > nums[j] ) {
+                if(dp[j].length + 1 > dp[i].length){
+                    // 另dp[i] = dp[j],并且将nums[i]传入
+                    dp[i] = dp[j].slice();
+                    dp[i].push(nums[i]);
+                }
+                if(dp[i].length > max) {
+                    max = dp[i].length;
+                    result = dp[i].slice();
+                }
+            }
+        }
+    }
+    return result
+};
+```

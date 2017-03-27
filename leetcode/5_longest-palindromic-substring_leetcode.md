@@ -52,5 +52,35 @@ var longestPalindrome = function(s) {
     return s.substring(maxStart,maxEnd+1)
 };
 ```
+#### dp的单数组解法
 
+```js
+var longestPalindrome = function(s) {
+  if(!s) return ''
+   if(s.length === 1) return s
+   let len = s.length, dp = [];
+   for(let size = len ; size >= 1; size--) {
+       for(let i = 0; i + size <= s.length; i++) {
+          const current = s.substr(i,size);
+          if(isPalindrome(current)) {
+              return current
+          }else{
+              dp[size] = -1;
+          }
+       }
+   }
+  return s[0];
+};
+
+function isPalindrome(s) {
+    if(s.length === 1) return true
+    let i = 0, j = s.length -1;
+    for(let i=0,j=line.length-1; i<j; i++,j--){  
+       if(line.charAt(i) !== line.charAt(j)){  
+           return false;  
+       }  
+     }  
+    return true;   
+}
+```
 还有一种解法前面没想到，后面看了discuss后发现这个解法思想更简单，就是以s中的某一个char为中心，向两边扩散，如果发现不符合满足条件即返回当前最大长度、
