@@ -22,6 +22,56 @@ console.log( Object.getPrototypeOf( obj1 ) === Object.prototype ); // 输出：t
 console.log( Object.getPrototypeOf( obj2 ) === Object.prototype ); // 输出：true
 ```
 ----------------
+## `_proto_`和`prototye`的关系
+
+首先，我们得了解这两个东西是什么。
+- `prototye`:中文名是**显示原型**，每一个函数在创建之后都会拥有一个名为prototype的属性，这个属性指向函数的原型对象
+
+  Note:通过Function.prototype.bind方法构造出来的函数是个例外，它没有prototype属性;
+
+- `_proto_`:中文名是**隐式原型**，JavaScript中任意对象都有一个内置属性``[[prototype]]``，在ES5之前没有标准的方法访问这个内置属性，但是大多数浏览器都支持通过__proto__来访问。ES5中有了对于这个内置属性标准的Get方法`Object.getPrototypeOf()`
+
+  Note:(`Object.prototype` 这个对象是个例外，它的__proto__值为null);
+
+- 两者的关系： ****`_proto_`指向创建这个对象的函数(constructor)的prototype****
+
+- 两者的作用：
+
+  - 显式原型的作用：用来实现基于原型的继承与属性的共享。
+  - 隐式原型的作用：构成原型链，同样用于实现基于原型的继承。举个例子，当我们访问obj这个对象中的x属性时，如果在obj中找不到，那么就会沿着__proto__依次查找。
+
+如果仔细研究完上述的概念，那`_proto_`和`prototype`的概念可以说就很清楚了，我们需要抓住一些关键点，首先`prototype`是只有函数对象(构造函数)才有的属性，`_proto_`属性是除了null以外的对象都具备的一个属性。所以如果我们想简单的改变一个对象的原型，用以下的解法是不行的：
+```js
+var o = {
+  a:1,
+  add: function() {console.log('I am from o')}
+}
+var c  = {};
+c.prototype = o;
+c.add(); // c.add is not a function
+```
+正确的方法应该是用构造函数或者`Object.create()`来实现
+
+```js
+//构造函数
+function o{
+  this.a = 1;
+}
+o.prototype = {
+  add: function() {console.log('I am from o')}
+};
+
+var c = new o();
+c.add();// 'I am from o'
+
+//Object.create()方法
+var o = {
+  a:1,
+  add: function() {console.log('I am from o')}
+}
+var c  = Object.create(o);
+c.add();// 'I am from o'
+```
 
 ## 对象里的_proto_属性和constructor都有哪些作用？
 
@@ -188,3 +238,29 @@ function handleRequest() {
 - 3：加载别的网站内容，例如google广告，网站流量分析。
 - 4： 在上传图片时，不用flash实现无刷新。
 - 5： 跨域访问的时候可以用到iframe，使用iframe请求不同域名下的资源。
+
+
+## getter和setter到底是什么
+
+首先来说说从ES5中新引入的get和set，这两个属性都是见过但是没有研究过的属性。如果我们在控制台实际演练一遍，我们就很清楚get和set的作用：
+```js
+var o = {
+       a : 7,
+       get b(){return this.a +1;},//通过 get,set的 b,c方法间接性修改 a 属性
+       set c(x){this.a = x/2}
+   };
+   console.log(o.a);   // 7
+   console.log(o.b);  //  8
+   o.c  = 50;  
+   console.log(o.a); //  25
+```
+- getter
+使用get关键字为属性添加一个函数，函数名即为属性名，当对象访问此属性时，将自动调用定义的函数，并返回相应的值，相当于隐式的创建了一个访问此属性的函数。Getter的函数不传参数，在一个对象里不能对一个属性定义多个getter，此外，真实的属性不能与getter共存。
+
+- setter
+同getter一样，在对象设置属性值时，自动调用由set关键字定义的函数。函数需要传入一个value，value即为设置对象属性的值。
+
+也就是说，结合getter与setter，可以给对象添加一个伪属性，这个属性是可以通过动态计算得来的，访问属性即调用了方法进行动态计算，免去了许多不必要的定义的各种访问函数。
+## 参考链接：
+- [js中__proto__和prototype的区别和关系？](https://www.zhihu.com/question/34183746)
+- [JavaScript里的Getter与Setter](http://www.jianshu.com/p/dd83cb399b81)
