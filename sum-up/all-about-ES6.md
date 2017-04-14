@@ -2,6 +2,27 @@
 
 本篇主要用来介绍ES6的个人觉得比较常用的，但是自己没有完全彻底理解的新特性。
 
+## const是否可以定义数组和对象
+
+ES6给我们带来了新的变量声明方式，let和const，带来了块作用域的概念，我们不能再像使用`var`使用变量提升，或者重复声明，增加了我们代码的可读性。而另一方面，什么时候用const和什么时候用let有时又成了一个新的问题，虽然说const定义的是常量，let定义的是个变量，但是实际情况我们可能被这么几个问题困扰：
+
+- 定义对象和数组应该用`let`还是`const`?
+- 定义一些函数的时候用`let`还会`const`?
+
+其实，这两个问题还是要看对象和数组的性质。const 声明创建一个只读的常量。这不意味着常量指向的值不可变，而是变量标识符的值只能赋值一次。从原理上来说，`const`一旦声明，常量的值不能改变。而当我们用`const`定义数组和对象的时候，我们其实赋值的是对象和数组的地址，所以我们只要不让对象和数组地址更改，我们是可以用const定义的。
+```js
+const foo = {};
+foo.prop = 123;
+foo.prop // 123
+foo = {} // 地址改变，报错
+
+//数组
+const a = [];
+a.push("Hello"); // 可执行
+a.length = 0;    // 可执行
+a = ["Dave"];    // 地址改变，报错
+
+
 ## for of 循环
 
 `for of`循环前面也提到过，作为一种可以遍历iterate对象的方法，能完美的遍历Array，HTMLNodeList已经Map和Set。非常完美的弥补了`for ...in`遍历的几个坑。
@@ -102,7 +123,7 @@ fucntion containsAll(str){
 扩展运算符的作用是将一个数组转为参数序列，主要用在函数参数中。所以，上面的代码我们就可以这么完成。
 ```js
 function containsAll(str, ...needles) {
-  for (var needle of str) {
+  for (var needle of needles) {
     if (str.indexOf(needle) === -1) return false;
   }
   return true;
@@ -620,4 +641,8 @@ export function each(obj, iterator, context) {
 export { each as forEach };
 ```
 
-上面的比较神奇一点我在import loadsh后，each和forEach会指向同一个方法，也许这就是loadsh兼容大部分unders的方法的原因。
+上面的比较神奇一点我在`import loadsh`后，each和forEach会指向同一个方法，也许这就是loadsh兼容大部分unders的方法的原因。
+
+## ES7 await/async
+
+即将来劲
