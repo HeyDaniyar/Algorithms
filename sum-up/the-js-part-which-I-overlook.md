@@ -227,35 +227,7 @@ var createMask = singleton(
 |`for... in...`|以**任意顺序**遍历一个对象的**可枚举属性**。对于每个不同的属性，语句都会被执行。|`Array`,`String`,`Array`,`Object`|`Map`,`Set`|遍历时不是按特定顺序|
 |`for...of...`|在**可迭代对象**上创建一个迭代循环，对每个不同属性的属性值,调用一个自定义的有执行语句的迭代挂钩.| `Array`, `Map`, `Set`, `String`, `arguments`|`Object`|
 
-## ajax的核心思想
-ajax思想的核心在不重新加载页面的情况下，利用js发送http请求，从而达到与服务器通信的目的。那实现过程是什么呢？是通过师兄XMLHttpRequest对象，通过这个xhr对象，可以发送以及接受各种格式的信息，包括json，xml，html，甚至文本文件，而且还可以选择是异步还是同步实现。那如果让我去写一个js的原生ajax请求，也是一个很简单的事情。
-
-```js
-const xhr  = new XMLHttpRequest();
-xhr.open('GET', url);
-xhr.onreadystatechange = handleRequest;
-xhr.send(null);
-
-
-function handleRequest() {
- try {
-   if(xhr.readyState === XMLHttpRequest.DONE) {
-     if(xhr.status === 200) {
-       const data = xhr.responseText;
-       console.log('successfully get the data',data);
-     }
-     else{
-        console.log('There was a problem with the request.');
-     }
-   }
- }
- catch(err) {
-   console.log('the error message is ': err);
- }
-}
-
-```
-上面只是一个最简单的XMLHttpRequest的使用方式，其实现在xhr标准分为level1和level2，在level2中多了很多新的特性，比如支持发送跨域请求，支持发送和接收二进制，发送和获取数据时，可以获取进度信息等。
+#
 
 ## 跨域
 
@@ -371,6 +343,86 @@ o.p // undefined
 var x = f();
 x // undefined
 ```
+## 关于javascript的事件处理
+
+js的事件处理也是一个需要认真的理解的部分，推荐去阅读`于江水`的[JavaScript和事件](http://yujiangshui.com/javascript-event/#%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E8%BF%87%E7%A8%8B)，讲的逻辑十分清楚，让人有一种豁然开朗的感觉。
+
+下面我就结合我自己的理解已经上篇博文，对js事件做一个容易忽略的点的总结。
+
+### js监听事件的触发方式
+
+一般来说，js监听事件的方式主要由通过HTML内联属性（不推荐），DOM属性绑定，和使用事件监听函数来完成。一般最常用的就是添加事件监听函数和去除如下：
+```js
+element.addEventListener(<event-name>,<callback>,<use-capture>)；
+element.removeEventListener(<event-name>, <callback>, <use-capture>);
+```
+监听函数有两点需要主要，一个是第二个参数callback函数不能是匿名函数，另外一个就是<use-capture>这个参数是设置是否在“捕获”阶段监听。
+
+### 事件触发过程
+js事件有三个过程，这三个过程的每一个含义必须十分清楚，我们可以通过下面这个图进行分析：
+![img](http://jiangshui.b0.upaiyun.com/blog/2014/12/event0.svg)
+
+- 捕获阶段(Capute Phash)
+当DOM树的某个节点发生操作，事件是从WIndo发出的，通过不断遍历下级节点一直在到底目标节点之前的过程，就是捕获阶段。可以说，捕获阶段的任务就是建立这个事件传递路线，然后冒泡阶段就会沿着这条路返回window。
+
+- 目标阶段（Target Phase）
+这个阶段需要注意的是，事件触发的幕布总是最底层的节点。
+
+- 冒泡阶段（Bubbling Phase）
+这个阶段就是事件会随着第一个捕获阶段建立的路线原路返回，只有返回到window，事件才可以触发。
+
+### 事件代理
+
+因为事件的冒泡机制，我们可以通过监听父级节点来实现监听子节点的功能。这就是事件代理。事件代理的好处很明显，想想这一个场景，一个ul列表一系类的li子节点，我需要实现点击li就触发的事件监听，使用事件代理让我们监听绑定在ul上，从而减少事件绑定。其次，万一哪天需要动态添加li节点，我们仍然可以接听。
+
+### 事件Event对象
+事件监听函数的第一个对象就是Event Object，这个对象里面包含了一些有用的属性或者方法,对以下的基本方法作用需要略知一二。
+
+- type(string)： 事件的名称
+- target(node):
+- bubbles(boolean)
+- preventDefault(function)
+- stopPropagation（function）
+- stopImmediatePropagation（functon）
+- pageX/pageY(number)
+- isTrusted(boolean)
+
+### 其他常用事件
+
+除了最常用的click事件之外，这里还有另外几种常用的事件
+
+#### load
+load 事件在资源加载完成时触发。这个资源可以是图片、CSS 文件、JS 文件、视频、document 和 window 等等。
+
+比较常用的就是监听 window 的 load 事件，当页面内所有资源全部加载完成之后就会触发。比如用 JS 对图片以及其他资源处理，我们在 load 事件中触发，可以保证 JS 不会在资源未加载完成就开始处理资源导致报错。
+
+同样的，也可以监听图片等其他资源加载情况。比如说，说一个最近的阿里面试题，给定一个image图片地址数组，我现在想要做一个功能，即每隔固定时间去加载图片，需要怎么完成？来看看代码如下；
+```html
+<img class="image" src="">
+<button id="nextButton"></button>
+```
+```js
+const imgsList =['','',''];
+const image = document.querySelector('.image');
+image.setAttribute('src',imgsList[0]);
+
+image.addEventListener('load',loadNextImage);
+
+function loadNextImage(event) {
+    setTimeout(showNextImage, 1000)
+}
+
+function showNextImage() {
+    const image = document.querySelector('.image');
+    const currentIndex = parseInt(image.getAttribute('index')) || 0;
+    if(currentIndex === imgsList.length - 1) nextIndex = 0
+    else nextIndex = currentIndex + 1
+    image.setAttribute('src',imgsList[nextIndex]);
+    image.setAttribute('index',nextIndex);
+}
+```
+
+
 
 
 ## 关于js文件的加载顺序？
@@ -481,6 +533,10 @@ define(function(require, exports, module){
     b.doSomething();    // 依赖就近，延迟执行
 })
 ```
+总结一下来说，AMD和CMD的区别如下：
+1. 对于依赖的模块，AMD是提前执行，CMD是延迟执行
+
+2. CMD推崇依赖就近，AMD推崇依赖前置
 
 其实seajs/requirejs作为在线“编译”模块的方案，相当于在页面即浏览器端加载一个CMD/AMD解释器。这样浏览器就认识了define，exports，module这些东西。
 
@@ -567,6 +623,16 @@ loading阶段的耗时估计是一些不成熟的网站最容易优化的点，�
 - 值为0时候不需要任何单位
 - 尽量使用CSS3动画
 
+
+### 对于js缓存的利用
+
+catch-control：max-age
+
+Expires:
+
+Etag:
+
+If-Modified-Since/Last-Modifed
 
 
 
