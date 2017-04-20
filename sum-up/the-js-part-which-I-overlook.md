@@ -22,65 +22,234 @@ console.log( Object.getPrototypeOf( obj1 ) === Object.prototype ); // 输出：t
 console.log( Object.getPrototypeOf( obj2 ) === Object.prototype ); // 输出：true
 ```
 ----------------
-## `_proto_`和`prototye`的关系
+## 关于js的原型链
 
-首先，我们得了解这两个东西是什么。
-- `prototye`:中文名是**显示原型**，每一个函数在创建之后都会拥有一个名为prototype的属性，这个属性指向函数的原型对象
+说实话，我觉得js中的原型(prototype), 原型链（prototype chain）等概念是是很复杂的，真正的理解需要自己去好好钻研一段时间。
 
-  Note:通过Function.prototype.bind方法构造出来的函数是个例外，它没有prototype属性;
-
-- `_proto_`:中文名是**隐式原型**，JavaScript中任意对象都有一个内置属性``[[prototype]]``，在ES5之前没有标准的方法访问这个内置属性，但是大多数浏览器都支持通过__proto__来访问。ES5中有了对于这个内置属性标准的Get方法`Object.getPrototypeOf()`
-
-  Note:(`Object.prototype` 这个对象是个例外，它的__proto__值为null);
-
-- 两者的关系： ****`_proto_`指向创建这个对象的函数(constructor)的prototype****
-
-- 两者的作用：
-
-  - 显式原型的作用：用来实现基于原型的继承与属性的共享。
-  - 隐式原型的作用：构成原型链，同样用于实现基于原型的继承。举个例子，当我们访问obj这个对象中的x属性时，如果在obj中找不到，那么就会沿着__proto__依次查找。
-
-如果仔细研究完上述的概念，那`_proto_`和`prototype`的概念可以说就很清楚了，我们需要抓住一些关键点，首先`prototype`是只有函数对象(构造函数)才有的属性，`_proto_`属性是除了null以外的对象都具备的一个属性。所以如果我们想简单的改变一个对象的原型，用以下的解法是不行的：
+首先，在js中除了null和undefined一切皆为对象，js通过原型链来实现的的面向对象的编程范式。但是，首先要明确的是，并不是所有对象都有`prototype`这个属性。
 ```js
-var o = {
-  a:1,
-  add: function() {console.log('I am from o')}
-}
-var c  = {};
-c.prototype = o;
-c.add(); // c.add is not a function
+var a = {};  
+console.log(a.prototype);  //=> undefined
+
+var b = function(){};  
+console.log(b.prototype);  //=> {}
+
+var c = 'Hello';  
+console.log(c.prototype);  //=> undefined  
 ```
-正确的方法应该是用构造函数或者`Object.create()`来实现
+可以看出，一般的自定义对象是没有prototype属性的，js中的函数才有prototype属性。
+>Each function has two properties: length and prototype
+
+prototype和length是每一个函数类型自带的两个属性，这一点之所以比较容易被忽略或误解，是因为所有类型的构造函数本身也是函数，所以它们自带了prototype属性：
 
 ```js
-//构造函数
-function o{
-  this.a = 1;
-}
-o.prototype = {
-  add: function() {console.log('I am from o')}
-};
-
-var c = new o();
-c.add();// 'I am from o'
-
-//Object.create()方法
-var o = {
-  a:1,
-  add: function() {console.log('I am from o')}
-}
-var c  = Object.create(o);
-c.add();// 'I am from o'
+console.log(Object.prototype);  //=> {}  
+console.log(Function.prototype);//=> [Function: Empty]  
+console.log(String.prototype);  //=> [String: '']  
 ```
 
-## 对象里的_proto_属性和constructor都有哪些作用？
+介绍完完了prototype，我们再来看看`__proto__`。
 
-`_proto_`是JavaScript给对象提供的一个隐藏属性，某个对象的`_proto_`会默认指向他`construction`的原型对象,即`{construction}.prototype`。
+在js中，所有对象都有一个内置的[[Prototype]],用来指向创造他的“父类”的prototy。因为在ES5之前没有标准的方法访问这个内置属性，所以大多数浏览器都支持通过`__proto__`来访问。ES5中有了对于这个内置属性标准的Get方法`Object.getPrototypeOf()`
 
-所以说， `_proto_`起到一个纽带的作用，可以清楚的让我们知道这个对象有哪些继承，或者说还指向哪些对象。因为我们前面说过，`JavaScript`的对象最初都是由`Object.prototype`对象克隆而来的，那该怎么做到原型链的结构呢？答案就是通过改变对象构造器的原型指向，即`{construction}.prototype`，除了指向`Object.prototype`以外，还可以动态的指向其他对象。
+刚已经提到了，`__proto__`指向创造他的“父类”的prototype，那谁是创造它的父类？对，就是构造函数。所以当我们在进行一个`new`操作的时候，js的引擎还帮我们做了这些事情：
+
+```js
+const a= new Foo();
+// 等价于
+var a = new Object();
+a.__proto__ = Foo.prototype;
+Foo.call(a);
+```
+三个步骤的作用不言而喻，首先是新建一个对象实例，然后将这个对象的内置属性指向这个构造函数的原型，然后改变a的作用域，使其拥有Foo的上下文。
+
+所以通过这个`__proto__`,我们可以一直追溯到源头`Object.prototype`呢？ 答案或许不是那么简单。
+
+让我们先看一下这个例子：
+
+```js
+function Person() {
+}
+var man = new Person();
+man.name = 'dani';
+```
+按照刚才的理论，boy是Person构造函数一个实例，所以boy的`__proto__`会指向`Person.prototype`,这没问题。对于Person来说，它的`__proto__`又指向创造他的`Function`的`prototye`，这也没问题。
+
+那么，`Function`也是一个构造函数，`Function.__proto__`又指向谁呢？
+
+我们知道，js的函数是一种特殊的对象类型，那是应该指向创造他的Object吗？答案并不是。
+
+因为`Function`作为一个构造函数的最顶端，只能来创造别人，不能被别人创造，所以这里
+`Function.__proto__`就指向他自己的原型`Function.prototype`。`Function.prototype`作为一个`Object`对象，他的`__proto__`毫无疑问的指向`Object.prototye`,而我们知道，`Object.prototye`的`__proto__`也就是原型链的顶端，`null`。
+如果你被绕进去了，可以看看这个图来加深印象。
+
+![关于js的原型链](./imgs/原型链模型.png)
+
+注意这里画的两条红线，是和一般的自定义对象不同的两点，一个就是刚说的`Function.__proto__ === Function.prototype`,还有一个就是`Object.__proto__ === Function.prototype`。
+因为Object也是一个被改造的类型，所以只能`__proto__`就指向了构造他的`Function.prototype`。对应着那个图，你可以猜下下面这些的表达式的结果。
+```js
+console.log('boy._proto_ === Person.prototype',boy.__proto__ === Person.prototype);
+console.log('Person.prototype.constructor === Person', Person.prototype.constructor === Person);
+console.log('Person.__proto__ === Function.prototype', Person.__proto__ === Function.prototype);
+console.log('Person.prototype.__proto__ === Object.prototype', Person.prototype.__proto__ === Object.prototype);
+console.log('Function.__proto__ === Function.prototype', Function.__proto__ === Function.prototype);
+console.log('Function.prototype.__proto__ === Object.prototype',Function.prototype.__proto__ === Object.prototype );
+console.log('Object.__proto__ === Function.prototype',Object.__proto__ === Function.prototype);
+console.log('Object.prototype.constructor === Object',Object.prototype.constructor === Object);
+```
+
+是的，所有的结果都会显示为`true`。
+
+那为什么js要用这种形式来实现继承呢，为什么我不能直接让一个修改对象的原型来达到效果呢？比如说这样的形式：
+```js
+function Person() {
+  this.kind = 'man';
+}
+var boy = {};
+boy.__proto__ = Person;
+Person.call(me);
+console.log('kind', boy.kind) //'man'
+```
+可以看出，通过这样的形式似乎也能继承Person的一些属性，那为什么这样的方式不行呢？很显然，聪明的你应该已经看出来了，如果直接将原型链与构造函数挂钩，会有一个很严重的问题，就是构造出来实例只能获得Person的属性，
+而获得不了Person本身原型链上的属性。
+```js
+Person.prototype.speak = function() {
+  console.log('and I can speak different language');
+}
+var boy = {};
+boy.__proto__ = Person;
+Person.call(me);
+console.log('kind', boy.speak) //undefined
+```
 
 
-------------
+
+
+## 如何改变对象的原型链？
+上一部分介绍了关于js原型链和原型对象的关系，现在我们再来看看js改变原型链的方式。
+
+### Object.create()
+
+这个方法是ES5新增的一个指定元素原型对象的方法，可以用它来实现对象的继承。
+
+先看看字面意思，Object.create(),也就是说创造出来了一个对象，而且这个对象的`__proto__`属性指向了`()`里面设定的对象。
+```js
+// 创建一个原型为null的空对象
+var a = Object.create(null);
+// 创建一个原型为Object.prototype的空对象
+var b = Object.create(Object.prototype);
+console.log('a',a) //Object{}, no prototype
+console.log('b',b); // Object{},
+```
+除此之外，`Object.create()`还能传递第二个参数，第二个参数可以作为这个新创建的对象值传递进去。但是，需要注意的是，这个传递进去的对象值真的是赤裸裸的对象值，既不能读也不能写。什么意思呢？
+我们先来了解一下JS中的属性值，JS的属性值分两种，一种是数据属性，另一类是访问器属性(get和set)，对于数据属性，一般有这几个藏在背后的设置：
+
+1. `[[Configurable]]`: 它表示能否通过`delete`来删除属性从而重新定义属性，能否修改属性的特性，或者能否把属性修改为访问器属性。直接在对象上定义的属性。
+
+2. `[[Enumerable]]`: 表示能否通过`for－in`循环来返回属性。直接在对象上定义的属性。
+
+3. `[[Writeable]]`: 表示能否修改属性的值。直接在对象上定义的属性。
+
+4. `[[Value]]`: 包含这个属性的值。读取属性的时候，从这个位置读，写入属性的时候，把新的值保存在这个位置。这个特性默认的值为undefined。
+
+在常规的属性赋值时，这些默认值都为true，然而用`object.create()`传递第二个参数的话，这些值前三个都会设为false，所以我们无法读写。解决办法就是将这些值定义好后传递进去。是不是觉得这样的方法多此一举？然而，我们可以利用这种设置完成更多实用的功能。
+
+
+### Object.defineProperity
+
+从字面上也同样可以看出来，这个方法是定义对象属性的，而且定义方式和上面提到的Object.create一样，需要添加额外的descriptor,具体的用法如下：
+>Object.defineProperty(obj, prop, descriptor)
+
+在介绍Object.create时候提到了数据属性，其实这里的属性描述同样我们能描述访问器属性。
+
+- `get`: 取值函数，返回值会被当做这个属性的value
+- `set`: 赋值函数，定义set后会允许属性更改value,这个函数会接收一个参数并把它赋值给这个属性的value
+
+一般来说，这两个属性默认值都是undefined,一旦设置后就相当于设置`writeable = true`，看下面的用法：
+```js
+user = {}
+nameValue = 'Joe';
+Object.defineProperty(user, 'name', {
+  get: function() { return nameValue },
+  set: function(newValue) { nameValue = newValue; },
+  configurable: true // 允许在稍后重定义这个属性
+  });
+
+user.name //Joe
+user.name = 'Bob'
+user.name //Bob
+nameValue //Bob
+```
+
+这种方式似乎还不好看出来get和set的强大，如果和DOM操作联系起来，你就肯定可以明白了。
+
+```js
+function bindModelInput(obj, property, domElem) {
+  Object.defineProperty(obj, property, {
+    get: function() { return domElem.value; },
+    set: function(newValue) { domElem.value = newValue; },
+    configurable: true,
+  })
+}
+user = {};
+inputElem = document.getElementById("foo");
+bindModelInput(user,'name',inputElem);
+
+user.name = "Joe";
+console.log("input value is now "+inputElem.value) //input元素现在的值是'Joe'
+inputElem.value = 'Bob';
+console.log("user.name is now "+ user.name) //现在model中的value是Bob
+```
+是的，这就是一个数据双向绑定的简易实现！`Vue`和很多框架都是用了这个原理来实现了数据的双向绑定。除了这样的方式以外，我们其实还可以通过ES7的`Object.observe()`来实现，但是这个还需要很多浏览器支持,下面贴一段已经通过jquery和Object.observer实现的数据双向绑定。
+```js
+function bindObjPropToDomElem(obj, property, domElem) {
+  Object.observe(obj, function(changes){    
+    changes.forEach(function(change) {
+      $(domElem).text(obj[property]);        
+    });
+  });  
+}
+
+function bindDomElemToObjProp(obj, propertyName, domElem) {  
+  $(domElem).change(function() {
+    obj[propertyName] = $(domElem).val();
+    console.log("obj is", obj);
+  });
+}
+
+function bindModelView(obj, property, domElem) {  
+  bindObjPropToDomElem(obj, property, domElem)
+  bindDomElemToObjProp(obj, propertyName, domElem)
+}
+```
+### Object.assign
+
+这个方法用于将所有可枚举的属性的值从一个或多个源对象复制到目标对象。它将返回目标对象。
+```js
+Object.assign(target, ...sources)
+```
+那问题是，他是深复制还是浅复制呢？
+
+答案是肯定的,肯定是浅复制。
+```js
+var a= {
+  name:'dani',
+  skills:{
+    frontEnd:1
+  }
+}
+var b = Object.assign(a);
+a.skills.frontEnd = 2;
+console.log('b',b); // 2
+```
+改变原有对象的属性，也会修改这个新属性的对象。
+
+除此之外，这个方法也可以传入多个对象，这样新建的对象可以copy所有传入对象的属性，这种用法可以用来合并objects。
+
+要注意的是，这个assign只能copy的可枚举的，不是继承的属性。
+那如何才能做到copy一个对象的自身和继承属性呢？
+
+
 
 ## 将string转为数字有几种方法，有什么不同？
 首先最常用的方法是`parseInt()`，该内置函数可以接收一个字符串并把它转为整数，而且parseInt还接收第二个参数，可以规定以什么进制去看待这个字符数。
@@ -192,7 +361,93 @@ var createMask = singleton(
 ```
 4. 使用闭包来绑定this变量（已经不再流行）
 
-## `setInterval`和`setTimeout`区别
+## 关于 apply、call和bind的所有
+
+首先，你需要先理解在js中上下文的概念，js中函数里的上下文(context)分为定义上下文，还有执行上下文，而且还有一个很重要的特性就是函数的上下文可以改变。
+
+那我们通过什么方式来改变这个上下文呢？答案就是js给每个函数的原型上自带的call和apply函数。总而言之，**call和apply的作用就是改变函数的执行上下文**
+
+因为js的天生多态性，我们经常会遇到定义了一个对象的一些方法，然后我们想在另外一个对象直接使用这些方法的情况，比如说：
+```js
+
+var fruits = {
+    color: "red",
+    say: function() {
+        console.log("My color is " + this.color);
+    }
+}
+var vegetiable = {
+   color:"green"
+ }
+vegetiable.say();    // vegetiable.say is not a function
+```
+在vegetiable运行的时候，他的上下文指向vegetiable，但是vegetiable里没有say这个方法，所以这时候，我们就可以使用apply和call方法来强行的改变执行上下文。
+
+```js
+var vegetiable = {
+   color:"green"
+ }
+fruits.say.call(vegetiable);   // My color is green
+```
+
+如果我们用形式化的表示来表达call函数，那就会是`已经存在的方法.call(想要使用这个方法的对象，给这个方法传进去的参数)`。
+
+前面说到call和apply完全一样，只是参数传递方式不同，就是说call是一个，一个参数进行传递，符合我们经常使用的function的参数传递习惯，而apply传递的是一个参数数组。就这点区别。
+
+刚开始接触的时候，我对这种情况还比较疑惑，为什么call的第一个参数会是null或者拥有这个方法的自身? 思考下面的例子：
+```js
+var arr = [1,2,4,56];
+Math.max.apply(Math, arr); //56
+Math.max.apply(null, arr);  // 56
+Math.max.apply(Object, arr); // 56
+```
+为什么我传递的是不同的对象，但是三者的结果都是一样的呢 ？后来发现自己绕进去了，虽然确实传递了不同的函数上下文，但是，`Math.max()`这个方法和执行上下文有关系吗？
+我只是需要将数组，变成一个个的参数传递进去得出结果即可，并不关心当前的上下文。
+
+okay，下面让我们再来看看bind函数。
+bind函数其实和apply还有call的作用差不多，目的也是为了改变函数内的this指向，但是`bind()`是创建了一个函数，需要我们再去进行调用。bind的本质其实就是返回了一个闭包：
+
+```js
+function bind(fn, context) {
+  return function() {
+    return fn.apply(context, arguments);
+  }
+}
+```
+当然真正的bind函数比上面这个要复杂一些，你还可以实现函数传参等，但是本质上就是这个思想。还是上面的例子，我们也可以用bind函数进行改写，
+```js
+var fruits = {
+    color: "red",
+    say: function() {
+        console.log("My color is " + this.color);
+    }
+}
+var vegetiable = {
+   color:"green"
+ }
+// === bind(fruits.say, vegetiable)();
+fruits.say.bind(vegetiable)(); // My color is green
+```
+和apply还有call的区别是不是豁然开朗？
+
+
+总结一下：
+- `apply`、`call`、`bind` 三者都是用来改变函数的this对象的指向的；
+- `apply` 、`call` 、`bind` 三者第一个参数都是`this`要指向的对象，也就是想指定的上下文；
+- `apply` 、 `call`、`bind` 三者都可以利用后续参数传参；
+- `bind` 是返回对应函数，便于稍后调用；`apply` 、`call` 则是立即调用 。
+
+
+
+## 函数柯里化
+
+既然说到闭包的作用力有函数柯里化，那不仿让我们看看什么是函数柯里化。
+从概念上来说，柯里化是这么定义的的：
+>柯里化（Currying），又称部分求值（Partial Evaluation），是把接受多个参数的函数变换成接受一个单一参数（最初函数的第一个参数）的函数，并且返回接受余下的参数而且返回结果的新函数的技术。
+
+
+## `setInterval`和`setTimeout`详解
+
 `setInterval`和`setTimeout`区别不是很大，只是`setInterval`是每隔一段时间执行一次代码，而`setTimeout`是推迟一段时间后去执行（只执行一次），但是如果仔细分析`setInterval`和`setTimeout`的内部机理，有很多有意思的地方。
 
 - 1，`setInterval`和`setTimeout`除了接受第一个参数为回调函数，第二个时间参数外，还可以接受更多的参数，这些多余的参数会传入第一个回调函数中。
@@ -214,6 +469,42 @@ var createMask = singleton(
     timer = setTimeout(arguments.callee, 2000);
   }, 2000);
   ```
+下面再看一下clearTimeout和cleatInterval，从名字上也可以判断，这两个函数就是为了清除setTimout和setInterval函数设置的定时器，简单的用法不用多说了。我们来看下面这个比较有意思的例子。
+
+```js
+function fn1() {
+  for (var i = 0; i < 4; i++) {
+    var tc = setTimeout(function(i) {
+      console.log(i);
+      clearTimeout(tc)
+    }, 1000, i);
+  }
+}
+fn1();
+```
+你觉得会输出什么呢？如果没有cleatTimeout，你可能很容易看出来将会输出`0, 1, 2, 3`,然而再setTimeout中再设置cleatTimeout，输出居然变成了：
+```
+0,
+1,
+2
+```
+恩？`3`去哪里了？这可能是大部分像我一样人的疑惑。
+
+如果仔细分析，其实不难发现，这个tc是定义在闭包外面的，也就是说tc并没有被闭包保存，所以这里的tc指的是最后一个循环留下来的tc，所以最后一个3被清除了，没有输出。再来看一个例子：
+```js
+function fn2() {
+  for (var i = 0; i < 4; i++) {
+    var tc = setInterval(function(i, tc) {
+      console.log(i);
+      clearInterval(tc)
+    }, 1000, i, tc);
+  }
+}
+fn2();
+```
+现在又会输出什么呢？答案是输出0,1,2,3,3,3...。
+明明是用闭包的形式把tc也传递进去了，什么最后的3没有被清除呢？原因是因为js的执行顺序。在js中，我们是单线程从上往下，从右往左的执行，所以上述的代码会先设置setInterval然后再把setInterval的值赋给tc，也就是说第一次设置setInterval的时候，
+tc是undefined，然后第二次设置的时候tc是i=0时候定时器设置的值，同理第三次设置的是i=1的，第四次设置的是i=2的，而i=3的tc并没有被传递进去，也就是没有被清除，这就导致一直会循环输出3。
 
 
 
@@ -343,6 +634,46 @@ o.p // undefined
 var x = f();
 x // undefined
 ```
+
+
+## typeof 和 instanceof 操作符的区别
+
+### typeof
+首先概念需要明确，typeof返回的是一个表达式的数据类型的字符串，返回结果为js基本的数据类型，包括`number`,`boolean`,`string`,`object`,`undefined`,`function`。
+
+原本来说，一个变量是什么typeof就应该返回什么，然而在js中，typeof返回的值更多的与这个对象创建的方式有关。
+```js
+var a = 1;
+var b = new Number(1);
+console.log(typeof(a)) // number
+console.log(typeof(b)) // object
+```
+
+这就导致了typeof在实际使用中不能完全放心的用来判断一个变量的类型。较为准确的类型保存在变量的内部属性`[[Class]]`中，常常需要通过定义在`Object.prototype`上的方法`toString`来获取。
+typeof更多的作用是判断一个变量是否定义或者已经赋值。
+
+### instanceof
+定义：判断一个对象是否为某一个数据类型或者一个变量是否为一个对象的实例。
+同样的，instanceof和typeof有一样的问题，对于内置类型的变量还是力不从心：
+```js
+console.log("abc" instanceof String); // false
+console.log("abc" instanceof Object); // false
+console.log(new String("abc") instanceof String); // true
+console.log(new String("abc") instanceof Object); // true
+```
+但是对于自定义的对象，判断是否一个变量是一个对象自身或者原型链的实例还是很经常会用到：
+```js
+function Person() {
+  this.life = true;
+}
+function Man() {
+  this.interest = 'sport';
+}
+Man.prototype = new Person();
+console.log(new Man() instanceof Man); // true
+console.log(new Man() instanceof Person); // true
+```
+可以看到， `instanceof`就是用来判断一个对象在其原型链中是否存在一个构造函数的 `prototype `属性。
 ## 关于javascript的事件处理
 
 js的事件处理也是一个需要认真的理解的部分，推荐去阅读`于江水`的[JavaScript和事件](http://yujiangshui.com/javascript-event/#%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E8%BF%87%E7%A8%8B)，讲的逻辑十分清楚，让人有一种豁然开朗的感觉。
@@ -637,6 +968,8 @@ If-Modified-Since/Last-Modifed
 
 
 ## 参考链接：
+- [使用原生JavaScript实现数据绑定](http://www.html-js.com/article/A-day-to-learn-JavaScript-using-the-native-JavaScript-data-binding)
+- [深入浅出妙用 Javascript 中 apply、call、bind](http://web.jobbole.com/83642/)
 - [移动 H5（PC Web）前端性能优化指南](https://zhuanlan.zhihu.com/p/25176904)
 - [JavaScript 模块化七日谈](https://huangxuan.me/js-module-7day/)
 - [Webpack,broserify和gulp三者之间到底是怎样的关系](https://www.zhihu.com/question/37020798/answer/71621266)

@@ -215,7 +215,7 @@ function merge(left, right) {
 function mergeSort(arr) {
   if(arr.length <= 1) return arr
   let mid =  Math.floor(arr.length/2),
-  left = arr.splice(0, mid),
+  left = arr.slice(0, mid),
   right = arr.slice(mid);
   return merge(mergeSort(left), mergeSort(right));
 }
