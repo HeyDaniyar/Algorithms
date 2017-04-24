@@ -7,6 +7,34 @@
 
 也就是说，DOM是为了让文档与脚本script语言连接起来的一个接口。
 
+
+## 关于选择器
+
+要操作dom元素，我们首先得知道如何选择dom元素。js的原生dom选择方法比较简单，一般只包括以下几个方法：
+
+- getElementById()
+
+- getElementsByTagName()
+
+- querySelector()
+
+- querySelectorAll()
+
+- getElementsByClassName()
+## 关于创建元素
+
+- createElement()
+
+- createTextNode()
+
+- innerHTML()
+
+## 关于元素插入
+
+- appendChild()
+
+
+
 #### 如何访问？
 
 访问的DOM的方法很简单，只需要通过document或者window元素的API来进行操作即可。

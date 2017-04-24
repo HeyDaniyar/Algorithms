@@ -220,23 +220,144 @@ POST 是新建 (create) 资源, 非幂等, 同一个请求如果重复 POST 会�
 
 对于上面的影响，我们分别来谈谈解决对策。
 
-### 共享cookie
+### 一级域名相同的通信
 
-对于域名完全不同的两个网站，共享cookie是绝对不行的。但如果我们两个网页一级域名相同，二级域名不同，该如何引用cookie呢？
+首先我们来看看如果两个网页一级域名相同，二级域名不同，该如何通信数据，比如说cookie？
 
-其实浏览器在这里帮我们了一个大忙，对于这种情况，我们可以通过`document.domain`共享 Cookie。
-举例来说，A网页是`http://w1.example.com/a.html`，B网页是`http://w2.example.com/b.html`，那么只要设置相同的document.domain，两个网页就可以共享Cookie。
+浏览器在这里帮我们了一个大忙，对于这种情况，我们可以通过设置`document.domain`来共享 Cookie或者其他数据。
+举例来说，A网页是`http://hr.163.com/a.html`，
+B网页是`http://study.163.com/b.html`。
+主要设置相同的document.domain，两个网页就可以共享Cookie(注意必须两个页面同事需要设置，即使B网页是`http://163.com`)
 ```js
-document.domain = 'example.com';
+document.domain = '163.com';
 ```
-除此之外，服务器也可以在设置Cookie的时候，指定Cookie的所属域名为一级域名，比如.example.com。
+然后在a网页设置cookie：
+```js
+document.cookie = "test1=hello";
+```
+就可以在b网页读到这个cookie了:
+```js
+var allCookie = document.cookie;
+```
+除此之外，服务器也可以在设置Cookie的时候，指定Cookie的所属域名为一级域名。
 
 ```js
-Set-Cookie: key=value; domain=.example.com; path=/
+Set-Cookie: key=value; domain=.163.com; path=/
+```
+当然，除了cookie之外，我们还能通过设置`document.domain`并配合iframe的方法来进行数据传递。
+只要设置了同源了后，通过在网页中嵌入iframe，我们可以从父窗口获取子窗口内容，或者子窗口获取父窗口内容。
+```js
+//父窗口获取子窗口
+document.getElementById("myIFrame").contentWindow.document
+// 子窗口获取父窗口
+window.parent.document.body
 ```
 
-那对于最常用Ajax请求，不用多说，我们可以如下的办法：
+### 域名完全不同的通信
+那另外一种情况，就是域名完全不同的时候怎么获得cookie，这也是腾讯面试中被问到的一个问题。
 
+如果是完全不同原单 网站，目前有三种办法，可以解决跨域窗口的通信问题。
+
+1. 片段标识符
+2. window.name
+3. 跨文档通信API
+
+#### 片段标识符
+
+片段标示符是URL的#后面的部分，比如
+`http://a.com/b.html#fragment`的`#fragment`，如果只是改变片段标示符，页面不会重新刷新。
+所以父窗口可以通过把信息写入子窗口的片段标识符，子窗口在通过监听`hashchange`来进行消息传递：
+
+```js
+// http://parent.com/a.html
+var src = originURL + '#' + data;
+document.getElementById('myIFrame').src = src;
+
+//in child iframe page
+window.onhashchange = checkMessage;
+function checkMessage() {
+  var message = window.location.hash;
+  // ...
+}
+```
+同样的，子页面也可以改变父窗口的片段标识符。
+```js
+parent.location.href= target + "#" + hash;
+```
+
+然而这个方法有很多的弊端，一是会将数据暴露，另外只能传输很小的字段名。
+
+#### Window.name
+浏览器窗口有window.name属性，这个属性最大的特点是，无论是否同源，只要在同一个窗口里，前一个页面设置了这个属性，后一个网页可以读取它。
+尝试在浏览器打开百度baidu.com，然后在控制台输入window.name='aaa';回车，接着在地址栏输入qq.com转到腾讯首页，打开控制台输入window.name查看它的值，可以看到输出了"aaa"。
+
+所以我们可以通过这个方法，通过iframe来做信使，载入一个想要通信但是不同源的页面，然后再让iframe的src变成与主窗口同域的地址，这样就可以访问iframe的`window.name`了，并获得想要的属性了。
+
+看下面的例子,我们想在页面`a.com/a.html`获得`b.com/b.html`的数据:
+
+```html
+<!-- b.com/b.html -->
+<script>
+   window.name = "将你想要获取的数据放入window.cookie中";
+</script>
+```
+```html
+<!-- a.com/a.html -->
+<script>
+var ifr = document.createElement('iframe');
+var data;
+ifr.style.display = 'none';
+ifr.src = "b.com/b.html";
+document.body.appendChild(ifr);
+
+//iframe载入`b.com/b.html`后立即执行
+ifr.onload = function() {
+    // 跳回和主窗口a.com相同的域
+    ifr.src = 'about:black'; //设置about：black可以达到同域的效果 也可以节省资源
+    ifr.onload = function() {
+      data = iframe.contentWindow.name;
+      console.log('成功获取到数据',data);
+    }  
+}
+</script>
+```
+`window.name`可以传输最多2MB的内容，但是只能以字符串的形式传递。不过总体上来说，这是一个比较实用的获取不同域的方法。
+
+### window.postMessage
+
+`window.postMessage`是html5新引进的的特性，可以使用它来向其它的window对象发送消息，无论这个window对象是属于同源或不同源。
+
+调用postMessage方法的window对象是指要接收消息的那一个window对象，该方法的第一个参数message为要发送的消息，类型只能为字符串；第二个参数targetOrigin用来限定接收消息的那个window对象所在的域，如果不想限定域，可以使用通配符`*`  。
+
+需要接收消息的window对象，可是通过监听自身的message事件来获取传过来的消息，消息内容储存在该事件对象的data属性中。
+
+同样的，我们用`window.postMessage`来模拟一下刚才的在页面`a.com\a.html`获取`b.com\b.html`中的data
+```html
+<!-- b.com/b.html -->
+<iframe id="ifr" src="http://a.com/a.html"></iframe>
+<script>
+  window.onload = function() {
+      var data = "需要发送的数据";
+      var ifr = document.querySelector('#ifr');
+      var targetOrigin = 'http://a.com/a.html';
+      ifr.contentWindow.postMessage(data, targetOrigin);
+  }
+  // b页面也可以收到a页面的消息
+  window.addEventListener('message', function(e) {
+    console.log('a say: '+e.data);
+  }, false);
+</script>
+
+<!-- a.com/a.html -->
+<script>
+  window.addEventListener('message', function(e) {
+        var data = e.data;
+        console.log('从b.com接收到的消息:', data);
+        e.source.postMessage('这是来自a的消息', '*');
+    });
+</script>
+```
+除了这类通信以外，我们可能还经常需要实现跨域间的AJAX通信。对于常用Ajax请求，我们有如下的办法：
 ### JSONP
 
 虽然说浏览器里有着同源策略，但是聪明的你一定发现也有特殊情况。是的，在带有src属性的html标签中，如`script`,`link`,`img`，是不遵循同源限制的。所以JSONP就是巧妙的利用js在DOM中动态生成scritp元素，并将数据以回调函数的形式发送出去，来实现了不同源的ajax请求发送。具体的代码如图；
@@ -374,6 +495,7 @@ function ajax(data) {
 - 3 请求处理中
 - 4 请求已完成，且响应已经就绪
 
+
 ## Cookie和Session区别？
 
 
@@ -505,9 +627,213 @@ Last-Modifed 和 Etag 的区别
 2. 有时会定时生成一些文件，但是内容是不变的，或者仅仅修改变动的时间，此时我们并希望浏览器还是使用缓存的资源，Last-Modified则无法满足我们了。
 3. Etag是服务器或者开发者生成的一个唯一特殊标志值，可以更加有效的控制缓存。资源变更则更新该值，没有变更则不更新该值，简洁粗暴
 
+## HTTP 2.0 前世今生
+任何事物的消退和新生都有其背后推动的力量。所以在研究一个新协议或者技术之前，我们需要先来了解一下这个协议出现的技术背景，即为什么会有这个协议出现的需求。对于HTTP2.0来说，我们自然就要去看看http1.0 和http1.1这个两个兄弟的短板。
+
+### HTPP1.0的短板
+
+因为HTTP的运行是建立在TCP之上的，所以HTTP的协议的瓶颈有很多是基于TCP协议本身的特性，比如TCP建立连接时三次握手有1.5个RTT(`round-`)的延迟，又比如TCP在建立连接的初期有慢启动。所以连接的重用总是比新建连接性能要好。但是对于`http 1.0` 来说，有两个很重要的缺点：
+1. **连接无法复用**
+
+即每次请求都会经历三次握手和慢启动。三次握手在高延迟的场景下影响较明显，慢启动则对文件类大请求影响较大。
+
+2.  **`head of line blocking`**
+假设现在有5个请求，对于http1.0的实现，在第一个请求没有收到恢复之前，后续的请求只能排队，请求`2,3,4,5`只能等请求`1`的response回应之后才能逐个发出。一旦这个先头部队出现问题，影响的就是后面的大部队。
+
+### HTTP1.1的改进和其他补救办法
+
+对于前面提到的第一个问题，也就是连接无法复用，http1.1之后将http1.0协议就提出的`Connection:Keep-Alive`变成了默认选项，如果要关闭连接复用需要显式的设置`Connection:Close`。一段时间内的连接复用对PC端浏览器的体验帮助很大，因为大部分的请求在集中在一小段时间以内。但对移动app来说，成效不大，app端的请求比较分散且时间跨度相对较大。所以移动端app一般会从应用层寻求其它解决方案，长连接方案或者伪长连接方案：
+
+#### 基于tcp的长连接
+
+现在越来越多的移动端app都会建立一条自己的长链接通道，通道的实现是基于tcp协议。现在业界也有不少成熟的方案可供选择了，google的protobuf就是其中之一，像淘宝这类电商类app都有自己的专属长连接通道，
+
+#### web socket
+WebSocket和传统的tcp socket连接相似，也是基于tcp协议，提供双向的数据通道。WebSocket优势在于提供了message的概念，比基于字节流的tcp socket使用更简单，同时又提供了传统的http所缺少的长连接功能。
+
+为了解决第二个`head of line bloking`的问题，在http1.1中，协议设计者设计了一种新的`pipelining`机制。
+
+##### pipelining
+pipelining的流程可以从下图中看出：
+
+![pipeling流程](https://pic3.zhimg.com/c08e5c19ecf40cb531e8572689bcaa5a_b.png)
+
+也就是说，请求`2，3，4，5`不用等请求1的`response`返回之后才发出，而是几乎在同一时间把`request`发向了服务器。`2，3，4，5`及所有后续共用该连接的请求节约了等待的时间，极大的降低了整体延迟。
+
+当然，如果pipeling能解决所有问题，http2也不会这么着急出现了。`pipeling`的缺陷如下：
+
+- 只适用于简单请求（`GET`，`HEAD`)，非简单请求如`POST`就不能适用，因为请求之间可能会存在先后依赖关系。
+
+- 虽然可以一起发送了，但是server的response还是会要求依次返回，遵循FIFO(First in first out)的原则。
+
+- 绝大部分的http代理服务器不支持。
+
+所以，因为问题太多，大部分浏览器厂商要么根本不支持，要么就是默认关掉了pipelining机制。
 
 
+#### 其他方法
+
+为了解决延迟带来的苦恼，开发者开发出了各种捷径。
+
+#### SPriting
+
+priting指的是将多个小图片合并到一张大的图片里，这样多个小的请求就被合并成了一个大的图片请求，然后再利用js或者css文件来取出其中的小张图片使用。
+
+- 优点： 请求数减少
+- 缺点： 有时候可能只需要一张小图，却不得不下载整张大图；cache处理也麻烦，在只有小图过期的情况下，也得从服务器下载完整的大图。
+
+#### Inlining（内容内嵌）
+Inlining的思考角度和spriting类似，是将额外的数据请求通过base64编码之后内嵌到一个总的文件当中。比如一个网页有一张背景图，我们可以通过如下代码嵌入：background: url(data:image/png;base64,)data部分是base64编码之后的字节码，这样也避免了一次多余的http请求。但这种做法也有着和spriting相同的问题，资源文件被绑定到了其它文件，粒度变得难以控制。
+
+#### Concatenation（静态文件合并）
+
+#### Domain Sharding（域名分片）
+浏览器或者客户端是根据domain（域名）来建立连接的，对于一些domain，浏览器会限制请求数量。所以，如果我们建立几个`sub domain`，或者利用`cdn`来分发请求。所以，连接数变多之后，受限制的请求就不需要等待前面的请求完成才能发出了。
+
+domain sharding还有一大好处，对于资源文件来说一般是不需要cookie的，将这些不同的静态资源文件分散在不同的域名服务器上，可以减小请求的size。
+
+过domain sharding只有在请求数非常之多的场景下才有明显的效果。而且请求数也不是越多越好，资源消耗是一方面，另一点是由于tcp的slow start会导致每个请求在初期都会经历slow start，还有tcp 三次握手，DNS查询的延迟。
+
+
+### 新主角 http2
+
+在说`http2`之前，先来说说`SPDY`协议。SPDY协议其实就是`http2`的开拓者，是谷歌为了解决`http1.x`的缺陷专门提出的方案，后来发现测试数据很成功，这样`http`委员会的人坐不下去了，于是和谷歌协商让谷歌停止开发`SPDY`，自己出了个`http`的改进版`http2.0`。所以`SPDY`的很多特性也被`http2`所运用。
+
+SPDY位于HTTP之下，TCP和SSL之上，这样就可以更好的兼容以前老版本的HTTP协议，同时可以使用已有的SSL功能。那加入`SPDY`的`http2`给我们带来了什么新功能呢：
+
+#### 多路复用(multiplexing)
+
+多路复用可以说`pipelining`的进化版，在`pipelining`中我们还是需要`response`按顺序传递，而在`http2`的`multiplexing`中，我们可以给每个`request`设置优先级，这样重要的请求就会优先得到响应。下面这个图很好的诠释了这个新特性
+
+![multiplexing](https://i.stack.imgur.com/Zp2lf.png)
+
+除此之外，`multiplexing`允许以`chunk`为单位返回`response`，这样就更避免了出现`head of line blocking`
+
+#### 新的二进制格式
+
+`http2.0`用`binary`格式定义了一个一个的`frame``http2.0`的格式定义更接近`tcp`层的方式，这张二机制的方式十分高效且精简。`length`定义了整个`frame`的开始到结束，`type`定义`frame`的类型（一共10种），`flags`用`bit位`定义一些重要的参数，`stream id`用作流控制，剩下的payload就是request的正文了。虽然看上去协议的格式和http1.x完全不同了，实际上http2.0并没有改变http1.x的语义，只是把原来http1.x的header和body部分用frame重新封装了一层而已。调试的时候浏览器甚至会把http2.0的frame自动还原成http1.x的格式。具体的协议关系可以用下图表示：
+
+![对应关系](https://pic3.zhimg.com/05563d500d43202464e1e246e8e69e9a_b.png)
+
+#### header压缩
+
+前面提到过http1.x的header由于cookie和user agent很容易膨胀，而且每次都要重复发送。http2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。高效的压缩算法可以很大的压缩header，减少发送包的数量从而降低延迟。SPDY/2使用的是gzip压缩算法，但后来出现的两种攻击方式BREACH和CRIME使得即使走ssl的SPDY也可以被破解内容，最后综合考虑采用的是一种叫HPACK的压缩算法。
+
+
+#### Server Push
+
+http1.x只能由客户端发起请求，然后服务器被动的发送response。开启server push之后，server通过X-Associated-Content header（X-开头的header都属于非标准的，自定义header）告知客户端会有新的内容推送过来。在用户第一次打开网站首页的时候，server将资源主动推送过来可以极大的提升用户体验。
+
+
+#### 流量控制（Flow Control）
+
+TCP协议通过sliding window的算法来做流量控制。发送方有个sending window，接收方有receive window。http2.0的flow control是类似receive window的做法，数据的接收方通过告知对方自己的flow window大小表明自己还能接收多少数据。
+
+
+#### 兼容`http 1.x`
+
+因为客户端和server之间在确立使用http1.x还是http2.0之前，必须要要确认对方是否支持http2.0，所以这里必须要有个协商的过程。最简单的协商也要有一问一答，客户端问server答，即使这种最简单的方式也多了一个RTT的延迟，我们之所以要修改http1.x就是为了降低延迟，显然这个RTT我们是无法接受的。google制定SPDY的时候也遇到了这个问题，他们的办法是强制SPDY走https，在SSL层完成这个协商过程。ssl层的协商在http协议通信之前，所以是最适合的载体。google为此做了一个tls的拓展，叫NPN（Next Protocol Negotiation），从名字上也可以看出，这个拓展主要目的就是为了协商下一个要使用的协议。HTTP2.0虽然也采用了相同的方式，不过HTTP2.0经过激烈的讨论，最终还是没有强制HTTP2.0要走ssl层，大部分浏览器厂商（除了IE）却只实现了基于https的2.0协议。HTTP2.0没有使用NPN，而是另一个tls的拓展叫ALPN（Application Layer Protocol Negotiation）。SPDY也打算从NPN迁移到ALPN了。
+
+
+## Web安全机制
+
+### xss攻击
+
+xss攻击应该web安全入门级的攻击方式。首先，XSS是`Crose-site scripting`简称，也就是跨站脚本，这是一种攻击中通过在另一个用户的浏览器中执行恶意脚本的脚本注入式攻击手段。
+
+#### 攻击手段
+
+从攻击手段来说，有三类主要的XSS攻击：
+
+- ##### 持续型XSS攻击 ： 恶意输入来自网站的数据库
+
+主动提交恶意数据到服务器，攻击者在数据中嵌入代码, 比如我在留言板中插入一则包括`<script>...</script>`的代码，这样这个可以执行的恶意留言就会进行对方服务器，等下次另外的用户在请求加载网页的时候，用户的浏览器执行这个代码可能就会受到攻击。
+
+- ##### 反射性XSS，恶意输入来自受害者的请求
+
+也就是被动的非持久性XSS。诱骗用户点击URL带攻击代码的链接，服务器解析后响应，在返回的响应内容中隐藏和嵌入攻击者的XSS代码，被浏览器执行，从而攻击用户。 URL可能被用户怀疑，但是可以通过短网址服务将之缩短，从而隐藏自己。
+
+-  ##### 基于DOM的XSS攻击，漏洞来自客户端
+基于DOM的XSS，通过对具体DOM代码进行分析，根据实际情况构造dom节点进行XSS跨站脚本攻击。和反射性xss有些原理很相似，让我们来看看具体手段：
+
+1. 攻击者首先会构造一个包含恶意文本的URL发送给受害者
+2. 受害者被攻击者欺骗，通过访问这个URL向网站发出请求
+3. 网站收到请求，但是恶意文本并没有包含在给受害者的返回页面中
+4. 受害者的浏览器执行来自网站返回页面里的合法脚本，导致恶意脚本被插入进页面
+5. 受害者的浏览器执行插入进页面的恶意脚本，把自己的cookie发送到攻击者的服务器
+
+下面的图可以更好的说明整个工作流程：
+
+![DOM xss](https://pic2.zhimg.com/8820dbb78309084452bd9016e2745f3d_b.png)
+
+不难发现，在持久型和反射型xss攻击中，恶意代码已经经过了服务器这个环节，但是在基于DOM的XSS攻击中，返回的页面信息中没有任何XSS攻击代码。因为恶意文本是借助于`innerHTML`方法插入页面中，它也被当做HTML来执行，所以才会导致恶意脚本被执行。
+
+#### XSS的危害
+ 总的来说，XSS攻击通过能够再可靠的浏览器上下文中执行恶意脚本的权限，赋予了攻击者发动以下几类攻击：
+
+ - **Cookie窃取**：攻击者能够通过`document.cookie`访问受害者与网站关联的cookie，然后传送到攻击者自己的服务器，接着从这些cookie中提取敏感信息，如Session ID
+
+ - **记录用户行为**：攻击者可以使用 `addEventListener`方法注册用于监听键盘事件的回调函数，并且把所有用户的敲击行为发送到他自己的服务器，这些敲击行为可能记录着用户的敏感信息，比如密码和信用卡号码
+
+ - **钓鱼网站（`Phishing`）**：攻击者可以通过修改DOM在页面上插入一个假的登陆框，也可以把表单的`action`属性指向他自己的服务器地址，然后欺骗用户提交自己的敏感信息
+
+#### 阻止XSS
+
+因为xss攻击其实就是一种代码注入，所以我们需要确保用户输入的内容是合法安全的。首先可以通过以下两种方式来验证输入：
+
+- **编码**：也就是转义用户的输入，这样浏览器会把它解读为数据而不是代码
+
+  在web开发中最知名的一类编码莫过于HTML转义，该方法将`<`和`>`分别转义为`&lt;`和`&gt;`。如果用户输入的是是字符串`<script>...</script>`，那么最终的HTML会是下面这个样子：`&lt;script&gt;...&lt;/script&gt;`
+
+
+
+- **校验**：也就是对用户的输入进行过滤，这样浏览器仍然把它解读为代码但当中已不存在恶意指令
+
+  校验是一种过滤用户输入以至于让代码中恶意部分被移除的行为。在web开发中最知名的校验是允许HTML元素（比如`<em>`和`<strong>`）的存在而拒绝其他内容（比如`<script>`）。
+
+
+- **CSP**： 即`Content Security Policy`，CSP遵循下列规则
+
+  - 不许允不可信赖的来源：只有来自明确定义过的可信赖来源的外链资源才可以被下载
+
+  - 不允许内联资源：行内脚本和内联CSS不允许被执行。
+
+  - 不允许eval函数：Javascript的`eval`函数不可以被使用
+
+### CSRF攻击
+
+CSRF（`Cross-site request forgery`），中文名称：跨站请求伪造，也被称为：`one click attack/session riding`，缩写为：`CSRF/XSRF`。
+
+最简单的理解CSRF攻击，就是攻击者盗用了你的身份，以你的名义发送恶意请求。
+
+要想理解CSRF的原理，这位博主的图能说明一切：
+
+![CSRF原理](http://pic002.cnblogs.com/img/hyddd/200904/2009040916453171.jpg)
+
+可以看出，CSRF攻击是源于WEB的隐式身份验证机制，WEB的身份验证机制虽然可以保证一个请求是来自于某个用户的浏览器，但却无法保证该请求是用户批准发送的。
+
+#### CSRF防御
+
+CSRF的防御可以从服务端和客户端两头做起，但是主要一服务端来进行。服务端的CSRF方式方法很多样，但总的思想都是一致的，就是在客户端页面增加伪随机数。主要以下面几个方法：
+
+- #### Cookie Hashing
+
+即所有表单都包含同一个由cookie生成的伪随机值，因为攻击者不能获得第三方的Cookie(理论上)，所以只要再服务端进行Hash值的验证，恶意表单中的数据也就构造失败了。基本上这种方法可以杜绝99%的CSRF攻击，但是呢，由于用户的Cookie很容易由于网站的XSS漏洞而被盗取，这就另外的1%。一般的攻击者看到有需要算Hash值，基本都会放弃了，某些除外，所以如果需要100%的杜绝，这个不是最好的方法。
+
+- #### 验证码
+
+这个方案的思路是：每次的用户提交都需要用户在表单中填写一个图片上的随机字符串，厄....这个方案可以完全解决CSRF，但个人觉得在易用性方面似乎不是太好，还有听闻是验证码图片的使用涉及了一个被称为MHTML的Bug，可能在某些版本的微软IE中受影响。
+
+- #### Token
+
+即不同的表单包含一个不同的伪随机数。这是目前为止应该最常用的规避CSRF攻击的方法，然而，在实现Tokens时，需要注意一点：就是“并行会话的兼容”。如果用户在一个站点上同时打开了两个不同的表单，CSRF保护措施不应该影响到他对任何表单的提交。考虑一下如果每次表单被装入时站点生成一个伪随机值来覆盖以前的伪随机值将会发生什么情况：用户只能成功地提交他最后打开的表单，因为所有其他的表单都含有非法的伪随机值。必须小心操作以确保CSRF保护措施不会影响选项卡式的浏览或者利用多个浏览器窗口浏览一个站点。
 ## 引用
-[浏览器缓存解析](https://github.com/zhengweikeng/blog/issues/5)
-[跨域资源共享 CORS 详解](跨域资源共享 CORS 详解)
-[简析TCP的三次握手与四次分手](http://www.jellythink.com/archives/705)
+
+- [【译文】了解XSS攻击](https://zhuanlan.zhihu.com/p/21308080)
+- [HTTP/2.0 相比1.0有哪些重大改进？- victor yu](https://www.zhihu.com/question/34074946/answer/108588042)
+
+- [浏览器缓存解析](https://github.com/zhengweikeng/blog/issues/5)
+
+- [跨域资源共享 CORS 详解]()
+
+- [简析TCP的三次握手与四次分手](http://www.jellythink.com/archives/705)

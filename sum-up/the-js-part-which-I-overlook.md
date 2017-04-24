@@ -141,6 +141,16 @@ var b = Object.create(Object.prototype);
 console.log('a',a) //Object{}, no prototype
 console.log('b',b); // Object{},
 ```
+如果让你去手写一个`Object.create`,应该怎么实现呢？
+```js
+var create = function( obj ){
+  var F = new Function();
+  F.prototype = obj;
+  return new F();
+}
+```
+
+
 除此之外，`Object.create()`还能传递第二个参数，第二个参数可以作为这个新创建的对象值传递进去。但是，需要注意的是，这个传递进去的对象值真的是赤裸裸的对象值，既不能读也不能写。什么意思呢？
 我们先来了解一下JS中的属性值，JS的属性值分两种，一种是数据属性，另一类是访问器属性(get和set)，对于数据属性，一般有这几个藏在背后的设置：
 
@@ -300,6 +310,7 @@ getName.call( obj1 ); // 输出: sven
 getName.call( obj2 ); // 输出: anne
 ```
 
+
 - #### 借用其他对象的方法
 
   借用方法的第一种场景是借用构造函数，通过这种技术，可以实现类似继承的效果
@@ -414,21 +425,27 @@ function bind(fn, context) {
   }
 }
 ```
-当然真正的bind函数比上面这个要复杂一些，你还可以实现函数传参等，但是本质上就是这个思想。还是上面的例子，我们也可以用bind函数进行改写，
+当然真正的bind函数比上面这个要复杂一些，你还可以实现函数传参。我们可以来简单的实现一下：
 ```js
-var fruits = {
-    color: "red",
-    say: function() {
-        console.log("My color is " + this.color);
-    }
+Function.prototype.bind = function() {
+  var self = this,
+  //第一个传入的为context，需要绑定的this上下文
+  var context = [].shift.call(arguments);
+  //剩余的参数转成数组
+  var args = [].slice.call(arguments);
+  //组合两次分别传入的参数
+  return funtion() {
+    return self.apply(context,[].concat.call(args, [].slice.call(arguments)));
+  }
 }
-var vegetiable = {
-   color:"green"
- }
-// === bind(fruits.say, vegetiable)();
-fruits.say.bind(vegetiable)(); // My color is green
+var obj = { name: 'sven'};
+var func = function( a, b, c, d ){
+  console.log(this.name); // 输出:sven
+  console.log([ a, b, c, d ]) // 输出:[ 1, 2, 3, 4 ]
+}.bind(obj, 1, 2 );
+
+func(3,4);
 ```
-和apply还有call的区别是不是豁然开朗？
 
 
 总结一下：

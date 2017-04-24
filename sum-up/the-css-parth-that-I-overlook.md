@@ -447,6 +447,12 @@ align-content: stretch | flex-start | flex-end | center | space-between | space-
 - `align-self: auto | flex-start | flex-end | center | baseline | stretch` : 定义某个项目有不同于container设置的对其方式，可覆盖align-items，默认值为auto，表示继承父元素的align-items属性
 
 
+## 关于rem，em和px
+
+- px 在缩放页面时无法调整那些使用它作为单位的字体、按钮等的大小；
+- em 的值并不是固定的，会继承父级元素的字体大小，代表倍数；
+- rem 的值并不是固定的，始终是基于根元素 <html> 的，也代表倍数。
+
 ## 参考资料
 - [10 分钟理解 BFC 原理](https://zhuanlan.zhihu.com/p/25321647)
 - [关于z-index 那些你不知道的事](https://webdesign.tutsplus.com/zh-hans/articles/what-you-may-not-know-about-the-z-index-property--webdesign-16892)

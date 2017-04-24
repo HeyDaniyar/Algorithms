@@ -21,14 +21,13 @@ const a = [];
 a.push("Hello"); // 可执行
 a.length = 0;    // 可执行
 a = ["Dave"];    // 地址改变，报错
-
+```
 
 ## for of 循环
 
 `for of`循环前面也提到过，作为一种可以遍历iterate对象的方法，能完美的遍历Array，HTMLNodeList已经Map和Set。非常完美的弥补了`for ...in`遍历的几个坑。
 关于`for of`和`for in`的区别， 可以看以下的代码：
 ```js
-
 let iterable = [3, 5, 7];
 iterable.foo = "hello";
 
@@ -474,7 +473,6 @@ class Widget {
 
 另一种方法就是索性将私有方法移出模块，因为模块内部的所有方法都是对外可见的。
 
-
 ```js
 class Widget {
   foo (baz) {
@@ -514,7 +512,7 @@ class ColorPoint extends Point {
 ES6中引入了用static来定义静态方法的机制，所谓静态方法，就是在不能被类的实例(可以直接被类调用)给调用的方法，只能在类内部使用。需要知道的是，父类的静态方法可以被子类给继承。
 
 
-父类`Foo`有一个静态方法，子类`Bar`可以调用这个方法。静态方法也是可以从`super`对象上调用，但不能用this调用！。
+父类`Foo`有一个静态方法，子类`Bar`可以调用这个方法。静态方法也是可以从`super`对象上调用，但不能用this调用。
 
 ```js
 class Foo {
@@ -537,7 +535,6 @@ class Car extends Foo {
 
 Bar.classMethod(); // 'hello'
 ```
-
 
 ## Module机制
 
