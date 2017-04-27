@@ -462,6 +462,20 @@ func(3,4);
 从概念上来说，柯里化是这么定义的的：
 >柯里化（Currying），又称部分求值（Partial Evaluation），是把接受多个参数的函数变换成接受一个单一参数（最初函数的第一个参数）的函数，并且返回接受余下的参数而且返回结果的新函数的技术。
 
+函数柯里化的实现如下：
+```js
+function curry(fn) {
+  var args = [].slice.call(arguments);
+  return function() {
+    if(arguments.length === 0) {
+      return fn.apply(this, args);
+    }else{
+      Array.prototype.push.apply(args, arguments);
+      return arguments.callee;
+    }
+  }
+}
+```
 
 ## `setInterval`和`setTimeout`详解
 
@@ -691,11 +705,12 @@ console.log(new Man() instanceof Man); // true
 console.log(new Man() instanceof Person); // true
 ```
 可以看到， `instanceof`就是用来判断一个对象在其原型链中是否存在一个构造函数的 `prototype `属性。
+
 ## 关于javascript的事件处理
 
 js的事件处理也是一个需要认真的理解的部分，推荐去阅读`于江水`的[JavaScript和事件](http://yujiangshui.com/javascript-event/#%E4%BA%8B%E4%BB%B6%E8%A7%A6%E5%8F%91%E8%BF%87%E7%A8%8B)，讲的逻辑十分清楚，让人有一种豁然开朗的感觉。
 
-下面我就结合我自己的理解已经上篇博文，对js事件做一个容易忽略的点的总结。
+下面我就结合我自己的理解以及上篇博文，对js事件做一个容易忽略的点的总结。
 
 ### js监听事件的触发方式
 
@@ -705,6 +720,17 @@ element.addEventListener(<event-name>,<callback>,<use-capture>)；
 element.removeEventListener(<event-name>, <callback>, <use-capture>);
 ```
 监听函数有两点需要主要，一个是第二个参数callback函数不能是匿名函数，另外一个就是<use-capture>这个参数是设置是否在“捕获”阶段监听。
+
+对于刚才不推荐的方法，我们也做一些了解。监听事件还可以用以下这些方法：
+1. `attachEvent`：IE9以下（不包括IE9）的MSIE中。
+2. `element.onclick=function(){}`：这是古老的事件绑定方式。
+3. `<a onclick='handle()'>`：这是最古老的事件绑定方式。
+
+其中，第一个方法是为了兼容IE所用的方法，基本上可以不做研究。
+
+第二三种和`addEventListener`最大的不同估计就是`this`的指向问题。第二种方法，即在脚本设置onclick方式的事件绑定，`this`总是指向被设置的DOM元素。第三种方法，即在HTML设置onclick，脚本总是指向Window。
+
+`addEventListener`中的this呢？这里的this并不一定会指向事实上被点击的元素，因为他有可能会触发两次，分别在捕获和冒泡阶段。我们可以用事件event提供的target和currentTarget属性来区分当前对象和目标对象。具体的原因，我们可以先来了解一下js事件的触发过程。
 
 ### 事件触发过程
 js事件有三个过程，这三个过程的每一个含义必须十分清楚，我们可以通过下面这个图进行分析：
@@ -721,7 +747,7 @@ js事件有三个过程，这三个过程的每一个含义必须十分清楚，
 
 ### 事件代理
 
-因为事件的冒泡机制，我们可以通过监听父级节点来实现监听子节点的功能。这就是事件代理。事件代理的好处很明显，想想这一个场景，一个ul列表一系类的li子节点，我需要实现点击li就触发的事件监听，使用事件代理让我们监听绑定在ul上，从而减少事件绑定。其次，万一哪天需要动态添加li节点，我们仍然可以接听。
+因为事件的冒泡机制，我们可以通过监听父级节点来实现监听子节点的功能。这就是事件代理。事件代理的好处很明显，想想这一个场景，一个ul列表一系类的li子节点，我需要实现点击li就触发的事件监听，使用事件代理让我们监听绑定在ul上，从而减少事件绑定，这样可以对性能进行优化。其次，万一哪天需要动态添加li节点，我们仍然可以处理事件。
 
 ### 事件Event对象
 事件监听函数的第一个对象就是Event Object，这个对象里面包含了一些有用的属性或者方法,对以下的基本方法作用需要略知一二。
@@ -919,10 +945,11 @@ $ browserify main.js -o bundle.js --debug
 
 在网站性能优化方面，我们一般可以分为服务器端的优化和页面优化。下面首先先说一下页面优化。
 
-我认为任何抛开了性能瓶颈去谈优化都是不现实的，我们首先需要了解的是一个网页的生成过程。通常来说，网页的生成过程，大致可以发为五步：
-1. HTML代码转化成DOM
-2. CSS代码转化成CSSOM（CSS Object Model）
-3. 结合DOM和CSSOM，生成一棵渲染树（包含每个节点的视觉信息）
+我认为任何抛开了性能瓶颈去谈优化都是不现实的，我们首先需要了解的是一个网页的生成过程。通常来说，网页的加载生成过程，可以分为以下几步：
+1. 解析HTML结构，将HTML代码解析成DOM树
+2. 在解析的过程中，如遇到样式表或者图片就会发起另外请求异步加载，如遇到外部脚本就，html文档解析暂停，等js文件加载并解析完后继续解析
+3. 样式表一旦下载完毕，就会生成CSS Rule Tree
+3. 结合DOM Tree 和CSS Rule True，生成一棵渲染树（包含每个节点的视觉信息）
 4. 生成布局（layout），即将所有渲染树的所有节点进行平面合成
 5. 将布局绘制（paint）在屏幕上
 
@@ -933,27 +960,73 @@ $ browserify main.js -o bundle.js --debug
 
 根据一般经验，我们可以把优化方向聚在这几个范围：
 
-#### 减少loading阶段的耗时
+### 减少loading阶段的耗时
 
 loading阶段的耗时估计是一些不成熟的网站最容易优化的点，我们可以从多个方面入手：
 
-- 请求数量和带宽
+#### 减少请求数量
+- JS/CSS文件用`webpack`等打包工具按需打包
 
-在这个阶段我们可以充分利用webpack/browserify等打包工具,将js打包成一个bundle的js文件，从而达到合并压缩文件的特性。除此之外，我们还可以开启GZIp，移除重复脚本，图像优化等方面竟尽可能的减少请求贷款、
+- 将小图标合并生成sprite图或者使用`iconfont`字体文件，或者用base64位来编码图片
 
-- 利用缓存
+这里需要再细说一下关于`base64`, 首先，我们得了解图片的`base64`编码就是可以将一副图片数据编码成一串字符串，使用该字符串代替图像地址的方法。
 
-另外一个优化loading的手段估计就是充分利用缓存。可以使用各种cdn来加载一些必要组件，比如使用font-awesome来加载常用的icon，达到减少dns查找的目的。
+这样图片的下载就不用再去单独发送请求，而是像文本数据一样读取即可。但是，使用base64也有很大的弊端，就是对于大图，这个base64编码可能会相当庞大，所以我们很有可能导致CSS文件过大，从而带来新的问题。所以使用base64编码不能盲目使用，而是要看情况，选择是用sprits还是base64。
 
-- 使用HTTP2
-还不太了解，不多说
+- 图片延迟加载  
+图片延迟加载的原理就是先不设置img的src属性，等合适的时机（比如滚动、滑动、出现在视窗内等）再把图片真实url放到img的src属性上。具体的实现可以使用`lazysizes`等一些友好的库来实现延迟加载。  
 
-- 按需加载
+- 延迟加载ga统计
 
-这一点也可以有webpack等打包工作做到。除此之外还能用一些滚屏加载，通过media query来加载不同css等各种方式。
+#### 减少请求大小
+- JS/CSS/HTML压缩
 
+- 使用gzip压缩
 
-#### 关于脚本执行和渲染的优化
+gzip压缩主要靠服务端。其实现原理大概是，如果浏览器支持gzip压缩，在发送请求的时候，请求头中会带有Accept-Encoding:gzip。然后服务器会将原始的response进行gzip压缩，并将gzip压缩后的response传输到浏览器，紧接着浏览器进行gzip解压缩，并最终反馈到网页上。但需要注意，gzip压缩会消耗服务器的性能，不能过度压缩。所以推荐只对JS/CSS/HTML等资源做gzip压缩
+
+- JS/CSS按需加载
+
+和前面提到的按需打包不同。
+- JS/CSS按需打包是预编译发生的事情，保证只打包当前页面相关的逻辑。
+- JS/CSS按需加载是运行时发生的事情，保证只加载当前页面第一时间使用到的逻辑。
+
+那么这个`“需”`应该怎样定义呢？我们可以按照前端路由来定义这个需 ，如果是在react 应用中，react-router 就是一个路由解决方案。我们可以把需要加载的函数放在合适的路由里，这样等到了访问了该路由的时候，再去执行函数去加载脚本即可。
+通常，我们用require.ensure或者require来达成实现。
+```js
+require.ensure(dependencies, callback, chunkName)
+```
+我们可以看一个简单的使用require.ensure和react-router的例子：
+```js
+const home = (location, callback) => {
+  require.ensure([], require => {
+    callback(null, require('modules/home'))
+  }, 'home')  
+}
+
+const blog = (location, callback) => {
+  require.ensure([], require => {
+    callback(null, require('modules/blog'))
+  }, 'blog')  
+}
+
+<Router history={history}>
+  <Route path="/" component={App}>
+    <Route path="home" getComponent={home}></Route>
+    <Route path="blog" getComponent={blog}></Route>
+  </Route>
+</Router>
+```
+- 图片压缩，jpg优化
+
+这个阶段主要是可以通过将图片托管到第三方云平台进行图片压缩，会有一套专门的方案来对图片压缩，格式转换，裁剪等。只需要在url后面加上对应的参数。
+对于格式选择方面，我们可以将允许压缩的图片缓存jpgeg格式，或者webp格式。但是因为webg的兼容性比较差，我们需要做好向后兼容。
+
+### 利用缓存
+
+现在浏览器对于缓存的利用也是提升性能优化的一个重要环节，关于这方面可以参考关于缓存的讲解。
+
+### 关于脚本执行和渲染的优化
 
 优化脚本执行的过程就是严格提高我们的代码质量，如果使用框架尽量遵循每个框架的最佳实践等。通常来看，我们可以避免这些不必要的点：
 
@@ -970,17 +1043,6 @@ loading阶段的耗时估计是一些不成熟的网站最容易优化的点，�
 - 不声明过多的font-size
 - 值为0时候不需要任何单位
 - 尽量使用CSS3动画
-
-
-### 对于js缓存的利用
-
-catch-control：max-age
-
-Expires:
-
-Etag:
-
-If-Modified-Since/Last-Modifed
 
 
 
