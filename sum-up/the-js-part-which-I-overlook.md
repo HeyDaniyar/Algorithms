@@ -636,8 +636,6 @@ var cloneObj = function(obj){
     return newobj;
 };
 
-
-
 ```
 
 ## null和undefined的区别
@@ -953,7 +951,7 @@ $ browserify main.js -o bundle.js --debug
 4. 生成布局（layout），即将所有渲染树的所有节点进行平面合成
 5. 将布局绘制（paint）在屏幕上
 
-这五步中，前三步都比较快，主要是后两步，我们合并成为渲染。网页生成的时候，至少会渲染一次。用户访问的过程中，还会不断重新渲染。但是如果我们进行`修改DOM`，`修改样式表`，或者添加`用户时间`，就会触发重新生成布局和重新绘制。我们可以用chrome的Timeline面板来很全面的分析各个阶段的耗时，包括loading，scripting，rendering，和painting
+网页生成的时候，至少会渲染一次。用户访问的过程中，还会不断重新渲染。但是如果我们进行`修改DOM`，`修改样式表`，或者添加`用户时间`，就会触发重新生成布局和重新绘制。我们可以用chrome的Timeline面板来很全面的分析各个阶段的耗时，包括loading，scripting，rendering，和painting
 [TimeLine面板](http://www.ruanyifeng.com/blogimg/asset/2015/bg2015091515.png)
 
 通过这个还有chromeDeVTool的Profile我们就可以试着去寻找到底应该优化的是什么方向。
