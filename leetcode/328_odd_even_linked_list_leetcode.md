@@ -1,5 +1,4 @@
 ## My solution O(1) extra spaces
----
 ```java 
 /**
  * Definition for singly-linked list.
@@ -27,6 +26,5 @@ public class Solution {
 ```
 
 ## Analysis 
----
 This question requires O(1) extra space and O(#nodes) time complexity. At first, I thought creating three nodes before the loop is O(3) space. However, they all only count O(1) space cause they are not like map or array. 
 The key to this question is just connecting the link in correct positions, pretty straightforward. 
