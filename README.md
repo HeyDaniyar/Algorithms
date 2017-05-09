@@ -6,8 +6,9 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
-|328|[Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list/#/description)|[Java](./leetcode/328_odd_even_linked_list_leetcode.md)|Medium|ListNode|
-|566|[Reshape the Matrix](https://leetcode.com/problems/reshape-the-matrix/#/description)|[Java](./leetcode/easy_556_reshape_the_matrix.md)|Easy|Matrix|
+|394|[Decode String](https://leetcode.com/problems/decode-string)|[Java](./leetcode/394_decode_string_medium.md)|Medium|Stack, StringBuilder| 
+|328|[Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list)|[Java](./leetcode/328_odd_even_linked_list_leetcode.md)|Medium|ListNode|
+|566|[Reshape the Matrix](https://leetcode.com/problems/reshape-the-matrix)|[Java](./leetcode/easy_556_reshape_the_matrix.md)|Easy|Matrix|
 |1|[Two Sum](https://leetcode.com/problems/two-sum/)| [JavaScript](./leetcode/twoSum-leetcode.js)|Easy|
 |3|[Longest SubString Without Repeating Characters](https://leetcode.com/problems/longest-subString-without-repeating-characters/?tab=Description)|[JavaScript](./leetcode/3-longestSubStringWithoutRepeatingCharacters-leetcode.md)|Medium||Hash String|
 |6|[ZigZag Conversion](https://leetcode.com/problems/zigzag-conversion/)| [JavaScript](./leetcode/06-zig-zag-leetcode.js)|Easy|
