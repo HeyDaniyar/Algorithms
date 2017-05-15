@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|491|[Increasing Subsequences](https://leetcode.com/problems/increasing-subsequences)|[Java](./leetcode/491_increasing_subsequeces_java.md)|Medium|Backtracking|
 |77|[Combinations](https://leetcode.com/problems/combinations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
 |46|[Permutations](https://leetcode.com/problems/permutations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
 |394|[Decode String](https://leetcode.com/problems/decode-string)|[Java](./leetcode/394_decode_string_medium.md)|Medium|Stack, StringBuilder| 
