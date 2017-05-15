@@ -6,7 +6,8 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
-|46| [Permutations](https://leetcode.com/problems/permutations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
+|77|[Combinations](https://leetcode.com/problems/combinations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
+|46|[Permutations](https://leetcode.com/problems/permutations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
 |394|[Decode String](https://leetcode.com/problems/decode-string)|[Java](./leetcode/394_decode_string_medium.md)|Medium|Stack, StringBuilder| 
 |328|[Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list)|[Java](./leetcode/328_odd_even_linked_list_leetcode.md)|Medium|ListNode|
 |566|[Reshape the Matrix](https://leetcode.com/problems/reshape-the-matrix)|[Java](./leetcode/easy_556_reshape_the_matrix.md)|Easy|Matrix|
