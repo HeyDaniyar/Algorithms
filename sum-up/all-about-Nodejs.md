@@ -175,11 +175,186 @@ getUrl("www.baidu.com").then((data) =>{
 
 ```
 
+## Node的非阻塞单线程I/O操作实现的原理？
+
+在学习Node的过程中，一直有很多问题没有完全理解，比如为什么在浏览器端执行的Javascript可以突然间与操作系统进行底层的交互？
+到底Node是多线程还是单线程？Node的回调机制又是如何实现的？
+
+要想真正理解这些问题，首先需要了解的就是Node的结构。
+
+### Node结构
+
+![Node结构](http://img4.tbcdn.cn/L1/461/1/a9e67142615f49863438cc0086b594e48984d1c9)
+
+上图中我们可以清晰的看出，Node的结构分为三层：
+
+- Node.js 核心标准库，这部分是js编写，是一些能直接使用的API
+- Node bingdings 是js与底层C/C++实现沟通的关键部分
+- Node.js运行的真正关键，由C\C++实现
+  - v8： js引擎，这就是为什么Node能运行js的关键
+  - Libuv： 为Node提供了跨平台，线程池，事件池，异步I\O等能力,是Node.js 关键的一个组成部分，它为上层的 Node.js 提供了统一的 API 调用，使其不用考虑平台差距，隐藏了底层实现。
+  - C-ares：提供了异步处理 DNS 相关的能力。
+  - http_parser、OpenSSL、zlib 等：提供包括 http 解析、SSL、数据压缩等其他的能力。
+
+通过这个结构解析，也就更能理解为什么说Node是一个平台而不是一个语言，node的底层是通过c++/c实现，然后由node-binding和v8引擎从而实现js的各种操作。
+
+那回到我们最初的问题，Node是如何实现一个非阻塞异步I\O操作的。我们举一个最简单的文件模块的例子：
+
+```js
+var fs = require('fs');
+fs.open('./test.txt', "w", function(err, fd) {
+	//..do something
+});
+```
+这段代码在node中调用过程可大致描述为:
+```
+lib/fs.js → src/node_file.cc → uv_fs
+```
+当我们调用 fs.open 时，Node.js 通过 process.binding 调用 C/C++ 层面的 Open 函数，然后通过它调用 Libuv 中的具体方法 uv_fs_open，最后执行的结果通过回调的方式传回，完成流程。
+
+### 异步、非阻塞 I/O
+也就是说，fs.open真正进行系统调用的是Libuv，是他负责所有I/O操作。所以，当我们将 I/O 操作的请求传达给 Libuv 之后，Libuv 开启线程来执行这次 I/O 调用，并在执行完成后，传回给 Javascript 进行后续处理。
+每一个异步I/O操作可以由以下两部完成：
+#### 发起I/O调用
+
+- 用户通过 Javascript 代码调用 Node 核心模块，将参数和回调函数传入到核心模块；
+
+- Node 核心模块会将传入的参数和回调函数封装成一个请求对象；
+
+- 将这个请求对象推入到 I/O 线程池等待执行；
+
+- Javascript 发起的异步调用结束，Javascript 线程继续执行后续操作
+#### 执行回调
+- I/O 操作完成后，会将结果储存到请求对象的 result 属性上，并发出操作完成的通知；
+
+- 每次事件循环时会检查是否有完成的 I/O 操作，如果有就将请求对象加入到 I/O 观察者队列中，之后当做事件处理；
+
+- 处理 I/O 观察者事件时，会取出之前封装在请求对象中的回调函数，执行这个回调函数，并将 result 当参数，以完成 Javascript 回调的目的。
+
+线程池的模拟异步操作如下图所示；
+![异步IO](http://img2.tbcdn.cn/L1/461/1/6a9490a6529010804899437ad63645233356d6bb)
+
+从这里，我们可以看到，我们其实对 Node.js 的单线程一直有个误会。事实上，它的单线程指的是自身 Javascript 运行环境的单线程，Node.js 并没有给 Javascript 执行时创建新线程的能力，最终的实际操作，还是通过 Libuv 以及它的事件循环来执行的。这也就是为什么 Javascript 一个单线程的语言，能在 Node.js 里面实现异步操作的原因，两者并不冲突。
+
+### 非I/O的异步操作
+在Node中，除了大部分异步I/O操作，其实还有一些与I/O无关的异步操作。主要包括这四个
+- setTimeOut()
+- setInterval()
+- setImmediate()
+- process.nextTick()
+
+这其中，setTimeout和setInterval的作用与在浏览器中基本相同，这里不用多说，而setImmediate和process.nextTick其实和setTimeout的0秒后执行效果一样，
+```js
+setTimeout(function () { // TODO
+}, 0);
+```
+为什么用process.nextTick和setImmediate是因为`setTimeout(fn, 0)`的方式比较浪费性能。而`process.nextTick()`更加高效。
+需要注意的是，process.nextTick()中的优先级要高于setImmediate()。
 
 
-### express框架中为什么要传递next？
+## Node创建多进程？
+
+为了能够充分利用多核CPU的特性，Node提供了node.child_process模块用来随意创建子进程的能力。一般有四个方法去创建子进程：
+
+- spawn()
+- exec()/execFile()
+- fork()
+
+### spawn
+`spawn(command, args, options) `适合用在进程的输入、输出数据量比较大的情况（因为它支持以 stream 的使用方式），可以用于任何命令。
+```js
+// child.js
+console.log('child argv: ', process.argv);
+process.stdin.pipe(process.stdout);
+
+// parent.js
+const p = child_process.spawn(
+  'node', // 需要执行的命令
+  ['child.js', 'a', 'b'], // 传递的参数
+  {}
+);
+console.log('child pid:', p.pid);
+p.on('exit', code => {
+  console.log('exit:', code);
+});
+
+// 父进程的输入直接 pipe 给子进程（子进程可以通过 process.stdin 拿到）
+process.stdin.pipe(p.stdin);
+
+// 子进程的输出 pipe 给父进程的输出
+p.stdout.pipe(process.stdout);
+/* 或者通过监听 data 事件来获取结果
+var all = '';
+p.stdout.on('data', data => {
+    all += data;
+});
+p.stdout.on('close', code => {
+    console.log('close:', code);
+    console.log('data:', all);
+});
+*/
+```
+
+### exec/execFile
+`exec(command, options, callback)` 和 `execFile(file, args, options, callback)` 比较类似，会使用一个 Buffer 来存储进程执行后的标准输出结果，可以一次性在 callback 里面获取到。不太适合输出数据量大的场景。
+
+### fork
+fork(modulePath, args, options) 实际上是 spawn 的一个“特例”，会创建一个新的 V8 实例，新创建的进程只能用来运行 Node 脚本，不能运行其他命令。并且会在父子进程间建立 IPC 通道，从而实现进程间通信。
+
+### 4种方法差别
+
+spawn()与exec()、execFile()不同的是，后两者创建时可以指定timeout属性设置超时时间 ，一旦创建的进程时间超过设定的时间就会被杀死。
+exec()与execFile()不同的是，exec()适合执行已有的命令，execFile()适合执行文件。下面看看具体一个调用方式，以下四个方式都会返回子进程对象：
+
+```js
+var cp = require('child_process');
+cp.spawn('node', ['worker.js']);
+cp.exec('node worker.js', function (err, stdout, stderr) {
+  // some code
+});
+cp.execFile('worker.js', function (err, stdout, stderr) {
+  // some code
+});
+cp.fork('./worker.js');
+```
+
+![imgs](./imgs/创建子进程的差别.png)
+
+### 进程间通信
+
+实现进程间通信的方法的有很多， 如`命名管道`，`匿名管道`，`socket`，`信号量`，`共享内存`，`消息队列`等。Node中实现通信IPC通道的方式管道。
+
+实际上默认情况下，只有 fork 出的子进程才能和父进程收发消息，因为 fork 会建立父子进程的 IPC 通道，其他方法并不会建立这种通道。
+
+```js
+// child.js
+console.log('child argv: ', process.argv);
+process.on('message', m => {
+  console.log('message in child:', m);
+});
+setTimeout(() => {
+  process.send('send from child');
+}, 2000);
+
+// parent.js
+const p = child_process.fork(
+  'child.js', ['a', 'b'],
+  {}
+);
+console.log('child pid:', p.pid);
+
+p.on('exit', code => {
+  console.log('exit:', code);
+});
+p.on('message', m => {
+  console.log('message from child: ', m);
+});
+p.send('send from parent');
+```
 
 
+## express框架中为什么要传递next？
+因为中间件机制，用来将当前路由传递给下一个中间件。
 
 
 ## 引用：

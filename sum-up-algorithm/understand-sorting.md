@@ -150,6 +150,45 @@ function quickSort(a) {
 ```
 当递归到最底层向上回溯时，其实我们只需把父节点和左子树右子树的元素合并成一个数组就行了
 
+除了这种递归写法以外，我们还有另外的一种非递归写法。
+
+```js
+function partition(nums, start, end) {
+  const tmp = nums[start];
+  while(start < end) {
+    while(nums[end] >= tmp && start<end) end--;
+    if(start < end) nums[start++] = nums[end];
+    while(nums[start] <= tmp && start < end) start++;
+    if(start < end) nums[end--] = nums[start];
+  }
+  nums[start] = tmp;
+  return start
+}
+function quickSort(arr) {
+  const start = 0, end = arr.length - 1;
+  const stack = [];
+  let left, right;
+  if(start < end) {
+    stack.push(end);
+    stack.push(start);
+    while(stack.length !== 0) {
+      left = stack.pop();
+      right = stack.pop();
+      let index = partition(arr, left, right);
+      if(left < index - 1) {
+        stack.push(index - 1);
+        stack.push(left);
+      }
+      if(right > index + 1) {
+        stack.push(right);
+        stack.push(index + 1);
+      }
+    }
+  }
+  return arr
+}
+
+```
 
 #### 性能分析
 
@@ -231,6 +270,43 @@ function mergeSort(arr) {
 
 
 ## 堆排序
+
+### 数据结构 - 堆
+理解堆排序，首先要理解堆的含义，堆可以近似等于一个完全二叉树，完全二叉树的一个“优秀”的性质是，除了最底层之外，每一层都是满的，这使得堆可以利用数组来表示（普通的一般的二叉树通常用链表作为基本容器表示），每一个结点对应数组中的一个元素。
+![堆](http://bubkoo.qiniudn.com/heap-and-array.png)
+
+对于给定的某个节点的下标i，可以很容易的计算出这个节点的父节点，子节点下标：
+- Parent(i) = floor(i/2),i的父节点下标
+- Left(i) = 2i, i的左子节点下标
+- Right(i) = 2i + i, i的右子节点下标
+如下图所示：
+![堆中父子关系图](http://bubkoo.qiniudn.com/heap-and-array-parent-children.png)
+
+对于zero-based的数组，即index从0开始的array，我们还需要做以下调整：
+- Parent(i) = floor((i-1)/2)，i 的父节点下标
+- Left(i) = 2i + 1，i 的左子节点下标
+- Right(i) = 2i + 2，i 的右子节点下标
+
+二叉堆一般分为两种：最大堆和最小堆。
+
+- 最大堆：
+  - 最大堆中的最大元素值出现在根结点（堆顶)
+  - 堆中每个父节点的元素值都大于等于其孩子结点（如果存在）
+- 最小堆：
+  - 最小堆中的最小元素值出现在根结点（堆顶）
+  - 堆中每个父节点的元素值都小于等于其孩子结点（如果存在）
+
+### 堆排序原理
+
+理解了堆的数据结构，再来看看堆排序原理。堆排序就是把最大堆堆顶的最大数取出，将剩余的堆继续调整为最大堆，再次将堆顶的最大数取出，这个过程持续到剩余数只有一个时结束。在堆中定义以下几种操作：
+
+#### buildMaxHeap创建最大堆
+
+创建最大堆（Build-Max-Heap）的作用是将一个数组改造成一个最大堆，接受数组和堆大小两个参数，Build-Max-Heap 将自下而上的调用 Max-Heapify 来改造数组，建立最大堆。因为 Max-Heapify 能够保证下标 i 的结点之后结点都满足最大堆的性质，所以自下而上的调用 Max-Heapify 能够在改造过程中保持这一性质。如果最大堆的数量元素是 n，那么 Build-Max-Heap 从 Parent(n) 开始，往上依次调用 Heapify。流程如下：
+![buildMaxHeap](http://bubkoo.qiniudn.com/building-a-heap.png)
+
+代码实现如下：
+
 ```js
 function buildMaxHeap(arr) {
   const len = arr.length;
@@ -238,6 +314,14 @@ function buildMaxHeap(arr) {
     heapify(arr, len,  i);
   }
 }
+```
+#### heapify
+最大堆调整(`HEAPIFY`)的作用是保持最大堆的性质，是创建最大堆的核心子程序，作用过程如图所示：
+
+![heapify](http://bubkoo.qiniudn.com/MAX%E2%80%90HEAPIFY-Procedure.png)
+
+具体实现有递归和非递归两种形式，具体见代码所示。
+```js
 function heapify(arr, len,  i) {
   let left = 2 * i + 1,
       right = 2 * i + 2,
@@ -253,6 +337,27 @@ function heapify(arr, len,  i) {
     heapify(arr, len, largest);
   }
 }
+//用非递归的方法实现heapify
+function heapifyWithoutRecruion(arr, len, index){
+  let left, right, largest;
+  while (true) {
+    left = 2 * i + 1;
+    right = 2 * i + 2;
+    largest = i;
+    if (left < len && array[largest] < array[left]) {
+      largest = iLeft;
+    }
+    if (right < len && array[largest] < array[right]) {
+      largest = right;
+    }
+    if (largest !== index) {
+      swap(array, largest, index);
+      index = largest;
+    } else {
+      break;
+    }
+  }
+}
 
 function swap(arr, i, j) {
   const temp = arr[i];
@@ -260,10 +365,18 @@ function swap(arr, i, j) {
   arr[j] = temp;
 }
 
+```
+### heapSort
+堆排序（Heap-Sort）是堆排序的接口算法，Heap-Sort先调用Build-Max-Heap将数组改造为最大堆，然后将堆顶和堆底元素交换，之后将底部上升，最后重新调用Max-Heapify保持最大堆性质。由于堆顶元素必然是堆中最大的元素，所以一次操作之后，堆中存在的最大元素被分离出堆，重复n-1次之后，数组排列完毕。整个流程如下：
+
+![heapSort](http://bubkoo.qiniudn.com/HeapSort.png)
+
+代码如下：
+
+```js
 function heapSort(arr) {
   buildMaxHeap(arr);
   let len = arr.length;
-
   for(let i = len - 1; i > 0; i--) {
     swap(arr, 0, i);
     len--;
@@ -272,7 +385,6 @@ function heapSort(arr) {
   return arr
 }
 ```
-
 #### 性能分析
 
 时间复杂度 O(nlogn), 空间复杂度O(1). 从这一点就可以看出，堆排序在时间上类似归并，但是它又是一种原地排序，时间复杂度小于归并的O(n+logn)

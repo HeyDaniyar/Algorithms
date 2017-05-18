@@ -244,7 +244,150 @@ function doBatchAppend() {
 
 doBatchAppend();
 ```
+## DOM对象attribute和property的不同
+
+### property
+首先，DOM是一个对象，所以可以像其他js对象一样存储自定义的property，这些property只会在js中显示，不会在html显示。
+所以说，自定义的dom property
+- 可以有任意值，property名区分大小写
+- 不会影响html
+
+### attribute
+DOM节点有以下方法来访问attribute
+```js
+ele.hasAttribute(name) //>=ie8
+ele.getAttribute(name)
+ele.setAttribute(name)
+ele.removeAttribute(name) //>=ie8
+```
+
+相比property，attribute有以下属性：
+- 值只能为字符串
+- 名称不区分大小写
+- 会在html中呈现
+- 可以用DOM的attributes propery列出所有的attribute
+
+## property和attribute同步
+一般来说，property和attribute同步的可能性有以下三种情况：
+
+1. 标准dom property和attribute值保持一致
+```js
+document.body.setAttribute('id','pageWrap')
+console.log(document.body.id) // pageWrap
+```
+2. 标准dom property的值不一定和attribute完全一致
+```js
+<a id="test">测试</a>
+
+<script>    
+var a = document.getElementById('test');
+a.href = '/';
+console.log(a.getAttribute('href')); // '/'
+console.log(a.href); // 完整链接如https://s.codepen.io/
+</script>   
+```
+还有一些其他的attribute，同步的值却不相同，比如input.checked, input.checked的property值只可能为true或false，但attribute值是获取你填入的任意值。
+
+3. 有些内置property是单向同步的
+比如，input.value同步value attribute值，但value attribute值不同步value property值.
+也就是说，input框内用户改变输入值后，value property值会随着变化，value attribute值不变.
+
+```js
+<input type="text" id="text"/>
+<script>
+var input = document.getElementById('text');
+
+input.setAttribute('value','hello');
+console.log(input.value); //hello
+console.log(input.getAttribute('value')); //hello
+
+input.value = 'new';
+console.log(input.value); //new
+console.log(input.getAttribute('value')); //hello
+
+input.setAttribute('value','other'); //此时再改变value attribute，value property不再变化
+console.log(input.value); //other
+console.log(input.getAttribute('value')); //other
+</script>
+```
+4. 同步的propery和attribute名称不一致
+因为JS中class是保留字，所以对于class attribute，用className property来代替class property。
+
+总结来说，大部分场景下都会使用property，但在如下两个场景会使用attribute
+1. **自定义的html attribute，因为使用property时不会同步到HTML.**
+2. **需要获取内置html attribute，并且不和property同步的，并且你确定你需要这个attribute. eg.input的value attribute.**
 
 
-参考：
+## 关于一些property的比较
+
+> offsetWidth 和 clientWidth 和scrollWidth的区别联系
+
+- offsetWidth/offsetHeight返回值包含content + padding + border，效果与e.getBoundingClientRect()相同
+- clientWidth/clientHeight返回值只包含content + padding，如果有滚动条，不包含滚动条
+- scrollWidth/scrollHeight返回值包含content + padding + 溢出内容的尺寸
+
+这张图比较明确的解释了这三个的不同：
+![offsetWidth不同](https://i.stack.imgur.com/5AAyW.png)
+
+实在不明白的，可以去看看这个大神的[JSFiddle](http://jsfiddle.net/y8Y32/25/),动态的展示了上一个图。
+> mouseover, mouseout, mouseenter, mouseleave区别联系
+
+首先要明确的是，js中只有`mouseenter`和`mouseout`，是冒泡事件，而`mouseout`和`mouseleave`是jquery做过处理的事件，他们不冒泡。
+
+可以看这个[jsfiddle](http://jsfiddle.net/ZCWvJ/7/)的演示;
+
+> focus/focusin/focusout/blur的区别和联系
+
+这四个属性都是为了获得js焦点使用的：
+- focus:当focusable元素获得焦点时，不支持冒泡；
+- focusin:和focus一样，只是此事件支持冒泡；
+- blur:当focusable元素失去焦点时，不支持冒泡；
+- focusout:和blur一样，只是此事件支持冒泡；
+
+触发顺序：
+> focusin > focus > focusout > blur
+
+实例：
+```html
+<form name="form">
+  <input type="text" name="name" value="Your name">
+  <input type="text" name="surname" value="Your surname">
+</form>
+```
+```js
+function addColor(){
+  this.style.background="red";
+}
+var form = document.forms['form'];
+if (form.addEventListener) { // 非 IE 浏览器
+  form.addEventListener('focus', addColor, true);
+}else{  // IE
+  form.onfocusin = addColor
+}
+```
+
+### #focusable元素
+默认情况下，只有部分html元素能获得鼠标焦点如input，很大一部分html元素是不能获得鼠标焦点的如div，这些能够获得鼠标焦点的元素就是focusable 元素。要想一个元素获得焦点，可以通过三种方式：
+- 鼠标点击
+- tab 键
+- 调用focus()方法
+
+可以获得焦点的元素：
+- window：当页面窗口从隐藏变成前置可见时，focus 事件就会触发
+- 表单元素(form controllers)：input/option/textarea/button
+- 链接元素(links)：a标签、area标签（必须要带 href 属性，包括 href 属性为空）
+- 设置了 tabindex 属性（tabindex 值非-1）的元素
+- 设置了contenteditable = "true"属性的元素
+
+### tabindex属性
+默认情况下就能 focusable 的元素太少，如果想让一个 div 元素成为 focusable 的元素怎么做呢？很简单，设置 tabindex 属性即可。
+
+tabindex 有2个作用：
+
+1. 使一个元素变成 focusable 只要在元素上设置了 tabindex 属性，不管此属性的值设为多少，此元素都将变成focusable元素。
+2. 定义多次按下 TAB 键时获得焦点的元素顺序tabindex 属性的值可以正数、0、负数，当多次按下TAB键，首先是tabindex为正数的元素获得焦点，顺序是：tabindex=1、tabindex=2、tabindex=3、tabindex=...，最后是tabindex=0的元素获得焦点。注意：tabindex为负数的元素不能通过 TAB 键获得焦点，只能通过鼠标点击或者调用focus()方法才能获得焦点。示例代码如下：
+
+## 参考：
+- [说说focus /focusin /focusout /blur 事件](https://segmentfault.com/a/1190000003942014)
+- [DOM对象attribute和property的不同](https://segmentfault.com/a/1190000003727646)
 - [破解前端面试（80% 应聘者不及格系列）：从 DOM 说起](https://zhuanlan.zhihu.com/p/26420034)

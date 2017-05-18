@@ -1,27 +1,43 @@
 ## JavaScript到底有几个类型？
 
 js的类型划分有些混乱，但从常规来说，js有八种类型，前提是特殊的对象如函数和数组算作是Object类型，Error当做单独的类型。
-
+基本类型：
 - Number  
 - String
 - Boolean
 - Symbol( Es6 )
+- Null
+- Undefined
+- Error
+
+对象类型：
 - Object
   - Function
   - Array
   - Date
   - RegExp
-- Null
-- Undefined
-- Error
 
 要注意的是，Number和String还有Booolean等基本类型也可以通过“包装类”的方式变成对象类型数据来处理。可以说，`JavaScript`中的绝大部分数据都是对象，而且每个对象都继承于一个根对象，这个根对象就是`Object.prototype`。
 
-```js
-console.log( Object.getPrototypeOf( obj1 ) === Object.prototype ); // 输出：true
-console.log( Object.getPrototypeOf( obj2 ) === Object.prototype ); // 输出：true
-```
-----------------
+
+### 基本类型和对象类型有什么区别？
+
+#### 可变性
+基本类型是不可变类型，无法添加属性，即使添加属性，解析器无法再下一步读取它；
+而对象类型是可变类型，支持添加和删除属性。
+
+#### 比较和传递
+基本类型是按值比较，按值传递，而对象类型是按引用比较，按引用传递。
+
+
+## 关于“===”和“==”两个比较符的内部机制
+
+### ”===”全等运算符
+
+1，如果两个值不是相同类型，他们不相等
+2，如果
+
+
 ## 关于js的原型链
 
 说实话，我觉得js中的原型(prototype), 原型链（prototype chain）等概念是是很复杂的，真正的理解需要自己去好好钻研一段时间。
@@ -454,8 +470,37 @@ func(3,4);
 - `apply` 、 `call`、`bind` 三者都可以利用后续参数传参；
 - `bind` 是返回对应函数，便于稍后调用；`apply` 、`call` 则是立即调用 。
 
+## js创建函数的方式
 
+js里如下几种方法定义函数：
 
+- 函数声明表达式
+- function函数声明
+- Function 构造函数
+- arrow function
+
+### 函数声明表达式的特别
+没有变量提升
+
+### Function 构造函数的特别
+不能创建闭包
+```js
+var x = 10;
+
+function createFunction1() {
+    var x = 20;
+    return new Function('return x;'); // this |x| refers global |x|
+}
+
+function createFunction2() {
+    var x = 20;
+    function f() {
+        return x; // this |x| refers local |x| above
+    }
+    return f;
+}
+
+```
 ## 函数柯里化
 
 既然说到闭包的作用力有函数柯里化，那不仿让我们看看什么是函数柯里化。
@@ -549,13 +594,48 @@ tc是undefined，然后第二次设置的时候tc是i=0时候定时器设置的�
 |`for... in...`|以**任意顺序**遍历一个对象的**可枚举属性**。对于每个不同的属性，语句都会被执行。|`Array`,`String`,`Array`,`Object`|`Map`,`Set`|遍历时不是按特定顺序|
 |`for...of...`|在**可迭代对象**上创建一个迭代循环，对每个不同属性的属性值,调用一个自定义的有执行语句的迭代挂钩.| `Array`, `Map`, `Set`, `String`, `arguments`|`Object`|
 
-#
 
-## 跨域
+## js操作cookie
+每个cookie都有一定的属性，如什么时候失效，要发送到哪个域名，哪个路径等等。这些属性是通过cookie选项来设置的，cookie选项包括：expires、domain、path、secure、HttpOnly。在设置任一个cookie时都可以设置相关的这些属性，当然也可以不设置，这时会使用这些属性的默认值。在设置这些属性时，属性之间由一个分号和一个空格隔开。代码示例如下:
+```js
+"key=name; expires=Thu, 25 Feb 2016 04:18:00 GMT; domain=ppsc.sankuai.com; path=/; secure; HttpOnly"
+```
+### 读取操作
+使用document.cookie来读取cookie，通常用分号来分割不同属性，也可以在字符串中使用变量
+```js
+var _date = new Date();
+　　_date.setDate(_date.getDate()+30);
+　　_date.toGMTString();
+
+document.cookie = "name=value;expires=date"
+```
+
+客户端创建cookie的时候最后分开设置，全都写在一行可能会出bug。
+```js
+//only set cooie "name=Jonh"
+document.cookie = "name=Jonh; age=12; class=111";
+//good
+document.cookie = "name=Jonh";
+document.cookie = "age=12";
+document.cookie = "class=111";
+```
+### 路径和域
+domain是域名，path是路径，两者加起来就构成了 URL，domain和path一起来限制 cookie 能被哪些 URL 访问。
+
+一句话概括：某cookie的 domain为“baidu.com”, path为“/ ”，若请求的URL(URL 可以是js/html/img/css资源请求，但不包括 XHR 请求)的域名是“baidu.com”或其子域如“api.baidu.com”、“dev.api.baidu.com”，且 URL 的路径是“/ ”或子路径“/home”、“/home/login”，则浏览器会将此 cookie 添加到该请求的 cookie 头部中。
+cookie 一般都是由于用户访问页面而被创建的，可是并不是只有在创建 cookie 的页面才可以访问这个 cookie。
+
+
+所以domain和path2个选项共同决定了cookie何时被浏览器自动添加到请求头部中发送出去。如果没有设置这两个选项，则会使用默认值。domain的默认值为设置该cookie的网页所在的域名，path默认值为设置该cookie的网页所在的目录。
+
+### secure
+secure选项用来设置cookie只在确保安全的请求中才会发送。当请求是HTTPS或者其他安全协议时，包含 secure 选项的 cookie 才能被发送至服务器。
+
+
+
 
 ## 关于各种类型转换的方法
 
-## 构造函数 成员函数这些都是什么
 
 ## iframe的使用场景
 
@@ -1020,9 +1100,11 @@ const blog = (location, callback) => {
 这个阶段主要是可以通过将图片托管到第三方云平台进行图片压缩，会有一套专门的方案来对图片压缩，格式转换，裁剪等。只需要在url后面加上对应的参数。
 对于格式选择方面，我们可以将允许压缩的图片缓存jpgeg格式，或者webp格式。但是因为webg的兼容性比较差，我们需要做好向后兼容。
 
-### 利用缓存
+### 尽可能的利用缓存
 
 现在浏览器对于缓存的利用也是提升性能优化的一个重要环节，关于这方面可以参考关于缓存的讲解。
+
+### 合理安排请求顺序
 
 ### 关于脚本执行和渲染的优化
 

@@ -145,6 +145,50 @@ z-index中很重要的概念就是**层叠上下文**和层叠顺序的概念。
 - 在 `will-change` 中指定了任意 CSS 属性，即便你没有直接指定这些属性的值（参考 这篇文章）
 - `-webkit-overflow-scrolling` 属性被设置 `"touch"`的元素
 
+## 浮动的原理，引起的问题及解决办法
+
+### 工作原理
+浮动元素脱离文档流，不占据空间(但会占据文字空间，产生文字环绕的效果)，浮动元素碰到包含他的边框或者浮动元素的边框停留。
+
+### 浮动的一些特性
+设想一个场景，现在想要给一段文字环绕一个图片，这时候想给文字加上margin，让其远里图片，margin会有用吗？
+答案是否定的，如果我们给整个p设定一个border，我们可以看出为什么没有用。
+![img](http://pic002.cnblogs.com/images/2012/315658/2012050812363738.jpg)
+
+可以看到，其实图片是位于<p>盒模型内部。这就是为什么p的margin无用的原因。
+
+再设想一个场景，如果给几个图片列表都设为float:left，当图片列表的大小一样时，他们会按顺序一个接一个排列。
+![li排列1](http://pic002.cnblogs.com/images/2012/315658/2012050813423497.jpg)
+
+那如果每个li大小不同呢？如有一些是100px，另外一些是150px，那结果可能会有点措手不及。
+![li排列2](http://pic002.cnblogs.com/images/2012/315658/2012050813484195.jpg)
+
+为什么浮动会产生这个效果？
+
+这需要时刻注意关于浮动元素位置的以下特性：
+
+关于水平方向的位置：
+
+- 向左浮动的元素不会出现在向右浮动的元素的右侧
+
+关于垂直方向的位置：
+- 浮动元素不会比容器的顶部还高
+
+- 浮动元素不会比前一个块级元素或浮动元素更高
+
+-  浮动元素不会比前一个行内元素更高
+
+也就是说，在上图的例子中，因为图片2撑高了该行高度，所以在图片3放完后，仍然有足够的垂直空间放置图片4。
+
+所以，我们需要记住的是，当你有一个浮动元素(不位于尾行)时，它后面的浮动元素占用的垂直空间必须大于或等于它才会触发换行。
+
+### 清除浮动
+
+- 使用clear
+  - 添加一个空元素，和浮动元素同级，设置clear：both
+  - 使用after伪元素创建一些不浮动的元素
+- 父元素设置overflow属性，为hidden或auto
+
 
 ## BFC原理及其应用
 
@@ -159,6 +203,7 @@ BFC，英文是Block Formating Contexts，翻译过来很难懂，怎么理解�
 - `body`根元素
 
 ### BFC特性
+
 
 因为BFC是一个让容器成为独立空间的特性，所以我们可以利用BFC许多巧妙特性。
 
@@ -452,6 +497,137 @@ align-content: stretch | flex-start | flex-end | center | space-between | space-
 - px 在缩放页面时无法调整那些使用它作为单位的字体、按钮等的大小；
 - em 的值并不是固定的，会继承父级元素的字体大小，代表倍数；
 - rem 的值并不是固定的，始终是基于根元素 <html> 的，也代表倍数。
+
+
+## 关于css reset是否需要
+css reset就重置浏览器的默认样式。
+```css
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, a, abbr, acronym, address, big,
+cite, code, del, dfn, em, font, img,
+ins, kbd, q, s, samp, small, strike,
+strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+center, u, b, i {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 100%;
+    font-family: inherit;
+    vertical-align: baseline
+}
+body {
+    line-height: 1
+}
+:focus {
+    outline: 0
+}
+ol, ul {
+    list-style: none
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+blockquote:before, blockquote:after, q:before, q:after {
+    content: “”
+}
+blockquote, q {
+    quotes: “” “”
+}
+input, textarea {
+    margin: 0;
+    padding: 0
+}
+hr {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: #000;
+    background-color: #000;
+    height: 1px
+}}
+```
+## css性能提升
+
+总的来说，css性能优化主要是以下四个方面：
+### 加载性能
+
+主要是从减少文件体积，减少则色加载，提高并发方面入手
+
+### 选择器性能
+
+一般selector对整体性能影响已经可以忽略不计了，selector更多考虑规范化和可维护性
+
+### 渲染性能
+
+这一块是css优化很重要的关注对象，应该避免出现类似太多text-shadow，css动画的优化，合理利用gpu加速等
+
+### 可维护性，可健壮性
+
+## css预处理器sass的一些常用功能
+
+#### 提供变量
+以`$`开头，如果需要在字符串中使用，则需要卸载#{}之中
+```js
+$side : left;
+.rounded {
+　　　　border-#{$side}-radius: 5px;
+}
+```
+
+#### 计算功能
+允许在代码中使用算式
+#### 嵌套功能
+
+除了在选择器上进行嵌套，属性也可以嵌套，比如下面的border-color
+```cs
+p {
+　border: {color: red;}
+　}
+```
+在嵌套的傣妹，可以使用&引用父元素，比如a:hover伪类
+```
+a{
+  &:hover{color:#ffb3ff}
+}
+```
+
+#### 允许继承
+SASS允许一个选择器，使用@extend来继承另一个选择器。
+
+#### mixin
+Mixin是可以重用的代码块，可以通过mixin来编写需要复用的css类
+```cs
+@mixin left {
+　float: left;
+　margin-left: 10px;
+}
+```
+使用@include来调用这个mixin
+```
+div {
+　@include left;
+}
+```
+除此之外，mixin可以指定参数值，这样就可以像函数一样调用。
+```cs
+@mixin left($value: 10px) {
+  float: left;
+　margin-right: $value;
+}
+div {
+　@include left(20px);
+}
+```
+
+#### if条件语句，while语句，for循环，自定义函数
+
 
 ## 参考资料
 - [10 分钟理解 BFC 原理](https://zhuanlan.zhihu.com/p/25321647)

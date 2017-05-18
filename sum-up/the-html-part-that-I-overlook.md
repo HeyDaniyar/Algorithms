@@ -1,4 +1,4 @@
-### doctype的具体意义
+## doctype的具体意义
 
 DTD（文档类型定义）是一组机器可读的规则，他们定义 XML 或 HTML 的特定版本中允许有什么，不允许有什么。在解析网页时，浏览器将使用这些规则检查页面的有效性并且采取相应的措施。浏览器通过分析页面的 DOCTYPE 声明来了解要使用哪个 DTD ，由此知道要使用 HTML 的哪个版本。
 DOCTYPE 当前有两种风格，严格（ strict ）和过渡（ transitional ）。
@@ -74,6 +74,38 @@ name属性可以定义的有很多，除了便于seo优化的几个tdk以外，�
 
 语义化的含义就是用正确的标签做正确的事情，html语义化就是让页面的内容结构化，便于对浏览器、搜索引擎解析；在没有样式CCS情况下也以一种文档格式显示，并且是容易阅读的。搜索引擎的爬虫依赖于标记来确定上下文和各个关键字的权重，利于 SEO。使阅读源代码的人对网站更容易将网站分块，便于阅读维护理解。
 
+首先，我们需要明记的是html的标签性质，在html元素中，我们把元素分为`行内元素(inline)`和`块元素(block)`。一般块元素比较多，行内元素比较少。
+- 行内元素
+> i label span strong small textarea input img
+
+- 块元素
+> div p h1-h6 ul li hr form
+
+
+## HTML5 新在哪儿？
+
+与html4的不同之处：
+
+- 文档类型声明不同，仅有一行 <!DOCTYPE HTML>
+
+- 新的解析顺序，不再基于SGML
+
+- 新的元素标签
+> section video progress nav meter time aside canvas datalist details embed footer header mark source summary
+
+- input元素的新类型， data email，url等
+
+- 新的属性 `ping`（用于a与area）, `charset`（用于meta）, `async`（用于script）
+
+- 新的API
+  - HTML Geolocation
+  - HTML Drag and Drop
+  - HTML Local Storage
+  - HTML Application Cache
+  - HTML Web Workers
+  - HTML SSE
+  - HTML Canvas/WebGL
+  - HTML Audio/Video
 
 ## SEO 优化
 
@@ -88,9 +120,12 @@ TDK为title,description,keywords三个的统称。当然title是最有用的，�
 ### 页面内容优化
 
   - 使用html5结构，让html更加语义化
+  - 重要内容HTML代码放在最前
+  - 重要内容不要用js输出：爬虫不会执行js获取内容
   - 唯一的H1标题
   - img设置alt属性
   - 谨慎设置nofollow
+  - 少用iframe：搜索引擎不会抓取iframe中的内容
 
 ### URL优化
 
@@ -108,3 +143,34 @@ TDK为title,description,keywords三个的统称。当然title是最有用的，�
 ### robots优化
 
 搜索引擎蜘蛛访问网站时会第一个访问robots.txt文件，robots.txt用于指导搜索引擎蜘蛛禁止抓取网站某些内容或只允许抓取那些内容，放在站点根目录。所以，需要利用好`robtos.txt`的各个语法规则。
+
+
+## 会话跟踪技术
+
+首先要理解的是会话的含义。
+### 什么是会话？
+客户端打开与服务器的连接发出请求到服务器响应客户端请求的全过程称之为会话。
+
+### 什么是会话跟踪？
+会话跟踪指的是对同一个用户对服务器的连续的请求和接受响应的监视。
+
+### 为什么需要需要会话跟踪？
+因为http的无状态性，所以我们需要让浏览器和服务器确定请求是否来自同一个用户。
+
+### keep-alive这样的长连接不能解决会话跟踪吗？
+这个需要进一步了解
+
+### 会话跟踪的四个办法
+- URL重写
+
+ 原理懂，什么时候触发？具体怎么操作？
+
+ - 隐藏表单域
+
+ 这应该只能在提交form表单的时候使用
+
+ - cookie
+ cookie是个比较好的方法，但是如果用户关掉了cookie呢？
+
+ - session
+ 如果cookie关了，sessionId传在哪里？session是存在服务器数据库中还是其他位置？

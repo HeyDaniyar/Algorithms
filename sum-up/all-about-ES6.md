@@ -296,24 +296,12 @@ const { SourceMapConsumer, SourceNode } = import ("source-map");
 
 ## 箭头函数
 
-箭头函数恐怕是ES6最帅的功能之一了。有了箭头函数，我们再也不需要担心拼错`funciton`了😂 通过用箭头定义函数，我们可以似代码结构更加清晰明了。但是，箭头函数和一般的函数也并不是完全一样，下面就列出了箭头函数和一般函数的几点重要区别：
+箭头函数恐怕是ES6最帅的功能之一了。有了箭头函数，我们再也不需要担心拼错`funciton`了😂
+
+通过用箭头定义函数，我们可以似代码结构更加清晰明了。但是，箭头函数和一般的函数也并不是完全一样，下面就列出了箭头函数和一般函数的几点重要区别：
+
 #### 1. this永远指向定义时的作用域
 在ES6之前，this的神奇用法经常让我们有些措手不及。很重要的一点就是函数或者对象内的`this`指向是不确定的，只有在函数调用的时候才能确定，所以有了很多`call`,`apply`,`bind`等改变函数this指向的方法。而在箭头函数中，我们可以放心的使用this去指向函数或者对象定义时的作用。
-
-```js
-var handler = {
-  id: '123456',
-
-  init: function() {
-    document.addEventListener('click',
-      event => this.doSomething(event.type), false);
-  },
-
-  doSomething: function(type) {
-    console.log('Handling ' + type  + ' for ' + this.id);
-  }
-};
-```
 
 this指向的固定化，并不是因为箭头函数内部有绑定this的机制，实际原因是箭头函数**根本没有自己的this**，导致内部的this就是外层代码块的this。正是因为它没有this，所以也就不能用作构造函数。所以，箭头函数转成ES5的代码如下。
 
@@ -334,24 +322,38 @@ function foo() {
   }, 100);
 }
 ```
+所以，在定义对象字面量或者定义原型方法的时候，使用this可能不会达到我们想要的效果。
+```js
+const calculator = {
+    array: [1, 2, 3],
+    sum: () => {
+        console.log(this === window); // => true
+        return this.array.reduce((result, item) => result + item);
+    }
+};
 
-#### 2.不可以使用arguments对象，该对象在函数体内不存在。
+console.log(this === window); // => true
+
+// Throws "TypeError: Cannot read property 'reduce' of undefined"
+calculator.sum();
+```
+#### 2.不可以使用arguments对象
+
+在箭头函数中，不存在argument对象，如需要获取函数参数，可以利用rest来获取参数列表。
 
 #### 3. 不可以使用yield命令，因此箭头函数不能用作Generator函数。
 
 #### 4. 箭头函数的return
-对于Array的forEach和filter等`return`具有特殊意义的原型方法，我们需要在箭头函数中省略以前的`return`。
+如果箭头函数只有一行，即没有大括号，就可以省略括号。如下：
 ```js
-//old
-var filtered = [12, 5, 8, 130, 44].filter(function isBigEnough(value) {
-  return value >= 10;
-});
-
-//new
+//one
 var filtered = [12, 5, 8, 130, 44].filter(value => value>=10)
+// same as
+var filtered = [12, 5, 8, 130, 44].filter((value) => {
+	return value>=10
+})
 ```
 
-------------
 ## Class类
 `Class`作为ES6引入的一个语法糖，对习惯了接触面向对象语言的开发者来说，无疑是摆脱`prototype`的一大好事。但是，像我这样以前完全没有面向对象语言开发经验的人来说🐶，许多概念都需要重新理解和熟悉。虽然写完后发现确实好用，代码逻辑性更强，不过也经常有调试时摸不着头绪的经历。下面就来梳理一下我在使用`Class`时经常疑惑的问题。
 
@@ -602,7 +604,7 @@ if (x === 1) {
 
 ### export default输出
 因为export的接口变必须和import的接口一致，而多数开发者不会去先读module里的export再写程序，所以一般会设置一个export的默认值来方法输入。
-```js
+``` js
 // export-default.js
 export default function () {
   console.log('foo');
@@ -642,4 +644,31 @@ export { each as forEach };
 
 ## ES7 await/async
 
-即将来劲
+即将来临
+
+## Symbol
+
+Symbol是ES6提出的一种新的基本数据类型，是为了解决让一个对象的属性或者方法名能够独一无二，从根本上防止属性名冲突。
+
+Symbol的用法很简单，只需要通过`Symbol`函数生成即可。需要注意的是，无论是否传入参数，或者传入相同的参数，因为每一个Symbol的值都是不相等的。
+```js
+// 没有参数的情况
+var s1 = Symbol();
+var s2 = Symbol();
+
+s1 === s2 // false
+
+// 有参数的情况
+var s1 = Symbol('foo');
+var s2 = Symbol('foo');
+
+s1 === s2 // false
+```
+然而，如果我们希望使用同一个Symbol值，我们可以用`Symbol.for`方法来做到这一点，它接受一个字符串作为参数，然后搜索有没有以该参数作为名称的Symbol值。如果有，就返回这个Symbol值，否则就新建并返回一个以该字符串为名称的Symbol值。
+```js
+var s1 = Symbol.for('foo');
+var s2 = Symbol.for('foo');
+
+s1 === s2 // true
+```
+### Symbol的使用场景
