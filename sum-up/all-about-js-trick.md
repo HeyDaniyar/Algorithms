@@ -32,7 +32,7 @@ function add(){
   }
   adder.toString = (() => args.reduce((a,b) => a + b))
 
-  return adder.toString()
+  return adder
 }
 ```
 
@@ -81,7 +81,7 @@ function deepClone(obj) {
   }
   //Array
   if(Array.isArray(obj)) { const result = [] }
-  // Object 
+  // Object
   else if(obj.constructor) {
     const result = new obj.constructor();
   } else result = {}

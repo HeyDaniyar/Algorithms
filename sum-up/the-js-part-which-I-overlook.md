@@ -1,6 +1,6 @@
-## JavaScript到底有几个类型？
+## JavaScript的类型？
 
-js的类型划分有些混乱，但从常规来说，js有八种类型，前提是特殊的对象如函数和数组算作是Object类型，Error当做单独的类型。
+js的类型划分有些混乱，但从常规来说，js可以划分为基本类型和对象类型，不同的类型包含如下：
 基本类型：
 - Number  
 - String
@@ -17,29 +17,136 @@ js的类型划分有些混乱，但从常规来说，js有八种类型，前提�
   - Date
   - RegExp
 
-要注意的是，Number和String还有Booolean等基本类型也可以通过“包装类”的方式变成对象类型数据来处理。可以说，`JavaScript`中的绝大部分数据都是对象，而且每个对象都继承于一个根对象，这个根对象就是`Object.prototype`。
-
+要注意的是，Number和String还有Booolean等基本类型也可以通过“包装类”的方式变成对象类型数据来处理。可以说，`JavaScript`中的绝大部分数据都是对象，而且每个对象都继承于一个根对象，这个根对象就是`Object.prototype`
 
 ### 基本类型和对象类型有什么区别？
 
-#### 可变性
-基本类型是不可变类型，无法添加属性，即使添加属性，解析器无法再下一步读取它；
-而对象类型是可变类型，支持添加和删除属性。
+基本类型和对象类型的不同表现的根本原因，是因为两者不同的内存分配机制，基本类型是存储在JS引擎存储在栈中的简单数据段，而对象类型，通常他的指针地址保存在栈，但数据本身保存在堆内存中。而在JS中是不能直接访问堆内存的，必须通过他的地址去访问，这就是为什么`[1] == [1]`的结果是false的原因，因为他们属于对象类型数据，相等符号比较的他们在栈中的地址，而不是其实质数据内容。
 
-#### 比较和传递
-基本类型是按值比较，按值传递，而对象类型是按引用比较，按引用传递。
+因为这种特殊的内存分配机制，所以造就了两者表现的不同形式，主要表现在以下方面：
+
+#### 复制变量时的不同
+  - 基本类型：在将一个保存着原始值的变量复制给另一个变量时，会将原始值的副本赋值给新变量，此后这两个变量是完全独立的，他们只是拥有相同的value而已。
+
+  - 对象类型：在将一个保存着对象内存地址的变量复制给另一个变量时，会把这个内存地址赋值给新变量，也就是说这两个变量都指向了堆内存中的同一个对象，他们中任何一个作出的改变都会反映在另一个身上。也就是说，复制对象时并不会在堆内存中新生成一个一模一样的对象，只是多了一个保存指向这个对象指针的变量。
+
+#### 参数传递的不同
+
+首先，无论是基本类型还是对象类型，函数传递都是值传递，不同点基本类型传递的纯粹的是值，复制了一个新的值传递给函数，而对象类型是复制了指针地址，所以指向了同一个对象，但是如果我们在函数内部让这个指针指向了新的对象，那外部的对象值就和这个指针也脱钩了，这就是传说中按共享传递。
 
 
 ## 关于“===”和“==”两个比较符的内部机制
 
 ### ”===”全等运算符
 
-1，如果两个值不是相同类型，他们不相等
-2，如果
+1. 如果两个值不是相同类型，他们不相等
+2. 如果两个值都是null或者都是undefined，它们相等
+3. 如果两个值都是布尔类型true或者都是false，它们相等
+4. 如果其中有一个是NaN，它们不相等
+5. 如果都是数值型并且数值相等，他们相等， -0等于0
+6. 如果他们指向相同对象、数组、函数，它们相等；如果指向不同对象，他们不相等
+
+### "=="相等运算符
+
+1. 如果两个值类型相同，按照`===`比较方法进行比较
+2. 如果其中一个值是null，另一个是undefined，它们相等
+3. 如果一个值是数字另一个是字符串，将字符串转换为数字进行比较
+4. 如果有布尔类型，将true转换为1，false转换为0，然后用`==`规则继续比较
+5. 如果一个值是对象，另一个是数字或字符串，将对象转换为原始值然后用`==`规则继续比较
+6. 其他所有情况都认为不相等
 
 
+## 关于不同类型的转换和比较
+先来看一个例子，为什么答案会是true？
+```js
+var rr = [], dd = 2;
+console.log(rr < dd);
+// true
+```
+这里就要说到不同对象的转换比较机制，对于对象到字符串或者数字的转换，一般基于下面的机制：
+#### 对象到字符串
+**首先调用toString方法，只有当toString不返回一个原始值的时候，才会调用valueOf()。toString方法但是基本上所有对象都返回字符串。所以对象到字符串形式的转换基本都是使用toString方法。**
+#### 对象到数字
+首先调用的`valueOf()`,如果返回原始值，将原始值转换为数字并返回。`valueOf`，基本上所有的对象返回的都是对象，虽然先使用valueOf，但是实际上也是使用的toString的方法。
+
+所以上面的例子，需要先把对象转换数字，先把rr对象进行隐式的类型转换，调用valueOf方法，但是返回的是一个对象，所以调用toString，toString方法返回的是一个空的字符串，空的字符串直接转换为0
+
+## js中创建对象的方式
+
+### 工厂模式
+创建对象交给一个工厂方法来实现，可以传递参数，但主要缺点是无法识别对象类型，因为创建对象都是使用Object的原生构造函数来完成的。
+
+```js
+function createPerson(name) {
+    var o = new Object();
+    o.name = name;
+    o.getName = function () {
+        console.log(this.name);
+    };
+    return o;
+}
+
+var person1 = createPerson('kevin');
+```
+缺点：对象无法识别，因为原型都指向Object
+
+### 构造函数模式
+构造函数模式与工厂方法区别在于：
+- 没有显式地创建对象
+- 直接将属性和方法赋值给this对象
+- 没有return语句
+
+```js
+function Person(name) {
+  this.name = name;
+  this.getName = function() {
+    console.log(this.name)
+  }
+}
+var person1 = new Person('kevin');
+```
+- 优点： 实例可以识别为一个特定的类型
+- 缺点： 每次创建实例每个办法都要创建一次
+
+### 原型模式
+JS中每个函数都有一个prototype(原型)属性，这个属性是一个指针，指向一个对象，它是所有通过new操作符使用函数创建的实例的原型对象。
+
+原型对象最大特点是，所有对象实例共享它所包含的属性和方法，也就是说，所有在原型对象中创建的属性或方法都直接被所有对象实例共享。
+```js
+function Person(name) {
+
+}
+Person.prototype.name = 'keivn';
+Person.prototype.getName = function () {
+    console.log(this.name);
+};
+var person1 = new Person();
+```
+优点：方法不会重新创建
+缺点：
+1. 所有的属性和方法都共享
+2. 不能初始化参数
+
+### 组合模式
+构造函数模式用于定义实例的属性，而原型模式用于定义方法和共享的属性。
+
+这样，每个实例都会有自己的一份实例属性的副本，但同时又共享着对方方法的引用，最大限度的节约内存。此外，组合模式还支持向构造函数传递参数，可谓是集两家之所长。
+```js
+function Person(name) {
+    this.name = name;
+}
+
+Person.prototype = {
+    constructor: Person,
+    getName: function () {
+        console.log(this.name);
+    }
+};
+
+var person1 = new Person();
+```
+优点：该共享的共享，该私有的私有，使用最广泛的方式
 ## 关于js的原型链
-
 说实话，我觉得js中的原型(prototype), 原型链（prototype chain）等概念是是很复杂的，真正的理解需要自己去好好钻研一段时间。
 
 首先，在js中除了null和undefined一切皆为对象，js通过原型链来实现的的面向对象的编程范式。但是，首先要明确的是，并不是所有对象都有`prototype`这个属性。
@@ -139,7 +246,55 @@ console.log('kind', boy.speak) //undefined
 ```
 
 
+## js实现继承的几种方式
 
+
+### 原型链继承
+
+基本思想：利用原型让一个引用类型继承另外一个引用类型的属性和方法, 改变原型链除了可以直接重指向prototype以外，还可以使用`Object.create()`等方法
+
+优点：实例是父类的实例，又是子类的实例，看起来是是最纯粹的继承方式
+缺点： 无法传递参数，子类区别于父类的属性和方法，必须在new语句之后执行，无法实现多重继承。
+
+```js
+function Parent(name, age, sex) {
+  this.name = name;
+  this.age = age;
+  this.sex = sex;
+}
+
+function Child() {
+
+}
+const ParentDani= new Parent('dani');
+Child.prototype = ParentDani;
+const child1 = new Child();
+
+console.log("child1",child1.name) //dani
+```
+
+### 在构造函数中改变this指向
+
+基本思想：子类型构造函数的内部调用父类构造函数，通过使用call()和apply()方法可以在新创建的对象上执行构造函数。
+优点：可以实现多重继承，可以把子类特有的属性设置放在构造器内部。
+
+优点：
+1. 可以实现多重继承
+2. 可以初始化继承自父类的参数
+缺点：
+1.浪费内存资源，所有的实例都会有一份成员方法的副本
+2. 使用instanceof发现，对象不是父类的实例。
+```js
+function Parent(name) {
+  this.name = name;
+}
+function Child(name) {
+  Parent.call(this,name);
+}
+const child1 = new Child('dani');
+console.log("child1",child1.name) //dani
+console.log('instanceof', child1 instanceof Parent) // false
+```
 
 ## 如何改变对象的原型链？
 上一部分介绍了关于js原型链和原型对象的关系，现在我们再来看看js改变原型链的方式。
@@ -188,7 +343,7 @@ var create = function( obj ){
 
 在介绍Object.create时候提到了数据属性，其实这里的属性描述同样我们能描述访问器属性。
 
-- `get`: 取值函数，返回值会被当做这个属性的value
+- `get`: 取值函数，返回值会被当做这个属性的value,设置`get`后不需要再设置value
 - `set`: 赋值函数，定义set后会允许属性更改value,这个函数会接收一个参数并把它赋值给这个属性的value
 
 一般来说，这两个属性默认值都是undefined,一旦设置后就相当于设置`writeable = true`，看下面的用法：
@@ -275,6 +430,23 @@ console.log('b',b); // 2
 要注意的是，这个assign只能copy的可枚举的，不是继承的属性。
 那如何才能做到copy一个对象的自身和继承属性呢？
 
+可以通过如下构建Object.constructor的方式：
+```js
+var obj = {
+  a:1,
+  b:2,
+}
+obj.__proto__ = {
+  c:1,
+}
+
+var copy = new obj.constructor();
+
+for(let key in obj) {
+ copy[key] = obj[key];
+}
+console.log('copy',obj)
+```
 
 
 ## 将string转为数字有几种方法，有什么不同？
@@ -309,55 +481,13 @@ console.log('b',b); // 2
 在`JavaScript`中，**this永远指向一个对象，但是具体指向哪个对象是由函数运行的时候基于函数的执行环境去绑定，而不是在函数声明时候的环境。**
 
 
-## call 和 apply 的用途 ？
-首先要回答的是，call和apply都是干的一个事情，他们两的区别只在于传入参数的形式不同，apply传入的第二个参数可以使数组或者类数组，call传入的参数数量不固定。
-
-- #### 改变this指向
-最常见的用途之一，可以从如下的例子中看出
-```js
-var obj1 = { name: 'sven' };
-var obj2 = { name: 'anne' };
-window.name = 'window';
-var getName = function(){
-  alert ( this.name );
-};
-getName(); // 输出: window
-getName.call( obj1 ); // 输出: sven
-getName.call( obj2 ); // 输出: anne
-```
-
-
-- #### 借用其他对象的方法
-
-  借用方法的第一种场景是借用构造函数，通过这种技术，可以实现类似继承的效果
-```js
-var A = function( name ){
-  this.name = name;
-};
-var B = function(){
-  A.apply( this, arguments );
-};
-B.prototype.getName = function(){
-  return this.name;
-};
-var b = new B( 'sven' );
-console.log( b.getName() ); // 输出： 'sven'
-
-```
-   借用方法的第二章是借用一些内置函数的内置方法。
-
-  比如说函数的参数列表 `arguments` 是一个类数组对象，虽然它也有“下标”，但它并非真正的数组， 所以也不能像数组一样，进行排序操作或者往集合里添加一个新的元素。这种情况下，我们常常 会借用` Array.prototype`对象上的方法。比如想往 arguments 中添加一个新的元素，通常会借用 `Array.prototype.push`：
-
-- #### 实现`Funtion.prototype.bind()`
-
-
 ## 通俗的解释闭包
 
 引用一句道格拉斯大叔的话：
 >闭包是指在JavaScript中，内部函数总是可以访问其所在的外部函数中声明的参数和变量，即使在其外部函数被返回（寿命终结）了之后。
 
 引用一下JavaScript花园的解释：
->闭包是 JavaScript 一个非常重要的特性，这意味着当前作用域总是能够访问外部作用域中的变量。 因为 函数 是 JavaScript 中唯一拥有自身作用域的结构，因此闭包的创建依赖于函数。
+>闭包是 JavaScript 一个非常重要的特性，这意味着当前作用域总是能够访问外部作用域中的变量。 因为函数是 JavaScript 中唯一拥有自身作用域的结构，因此闭包的创建依赖于函数。
 
 okay，如果说通过这两个你可以看出来闭包的作用是为了数据的私有性，那么问题来了：
 
@@ -369,10 +499,11 @@ okay，如果说通过这两个你可以看出来闭包的作用是为了数据�
 让我们依次来回答一下这些问题：
 
 - 闭包的应用场景？
-1. 因为js没有私有成员的概念，我们可以利用闭包来模拟私有成员，实现对私有成员的保护，从而达到约束和规范代码的作用。
-2. 在函数柯里化中使用。
+1. 管理私有变量和私有方法。因为js没有私有成员的概念，我们可以利用闭包来模拟私有成员，实现对私有成员的保护，从而达到约束和规范代码的作用。
+2. 在内存中维持变量，如缓存数据，函数柯里化中使用。
+
 3. 在js中使用单例模式的时候使用闭包,如下：
-```js
+ ```js
 var singleton = function( fn ){
     var result;  
     return function(){
@@ -387,6 +518,68 @@ var createMask = singleton(
 )
 ```
 4. 使用闭包来绑定this变量（已经不再流行）
+
+### 闭包中的数据的内存什么时候释放？
+ 这里要先了解js中的垃圾回收机制（GC)，JavaScript垃圾回收的机制很简单：找出不再使用的变量，然后释放掉其占用的内存，但是这个过程不是实时的，因为其开销比较大，所以垃圾回收器会按照固定的时间间隔周期性的执行。具体到浏览器的实现中，通常有两个策略：
+
+#### 标记清除
+ js中最常用的垃圾回收方式就是标记清除。当变量进入环境时，例如，在函数中声明一个变量，就将这个变量标记为“进入环境”。从逻辑上讲，永远不能释放进入环境的变量所占用的内存，因为只要执行流进入相应的环境，就可能会用到它们。而当变量离开环境时，则将其标记为“离开环境”。
+
+　垃圾回收器在运行的时候会给存储在内存中的所有变量都加上标记（当然，可以使用任何标记方式）。然后，**它会去掉环境中的变量以及被环境中的变量引用的变量的标记（闭包）**。而在此之后再被加上标记的变量将被视为准备删除的变量，原因是环境中的变量已经无法访问到这些变量了。最后，垃圾回收器完成内存清除工作，销毁那些带标记的值并回收它们所占用的内存空间。
+
+#### 引用计数
+
+引用计数的含义是跟踪记录每个值被引用的次数。当声明了一个变量并将一个引用类型值赋给该变量时，则这个值的引用次数就是1。如果同一个值又被赋给另一个变量，则该值的引用次数加1。相反，如果包含对这个值引用的变量又取得了另外一个值，则这个值的引用次数减1。当这个值的引用次数变成0时，则说明没有办法再访问这个值了，因而就可以将其占用的内存空间回收回来。这样，当垃圾回收器下次再运行时，它就会释放那些引用次数为0的值所占用的内存。
+
+但这样很容易引起一个问题，就是循环引用。例如下面的情况：
+```js
+function fn() {
+  var a = {};
+  var b = {};
+  a.pro = b;
+  b.pro = a;
+}
+
+fn();
+```
+　以上代码a和b的引用次数都是2，fn()执行完毕后，两个对象都已经离开环境，在标记清除方式下是没有问题的，但是在引用计数策略下，因为a和b的引用次数不为0，所以不会被垃圾回收器回收内存，如果fn函数被大量调用，就会造成内存泄露。
+
+为了避免类似这样的循环引用问题，最好是在不使用它们的时候手工断开原生js对象与DOM元素之间的连接：
+
+## 函数柯里化
+
+既然说到闭包的作用力有函数柯里化，那不仿让我们看看什么是函数柯里化。
+从概念上来说，柯里化是这么定义的的：
+>柯里化（Currying），又称部分求值（Partial Evaluation），是把接受多个参数的函数变换成接受一个单一参数（最初函数的第一个参数）的函数，并且返回接受余下的参数而且返回结果的新函数的技术。
+
+函数柯里化的实现如下：
+```js
+function curry(fn) {
+  var args = [].slice.call(arguments);
+  return function() {
+    if(arguments.length === 0) {
+      return fn.apply(this, args);
+    }else{
+      Array.prototype.push.apply(args, arguments);
+      return arguments.callee;
+    }
+  }
+}
+//函数柯里化的使用
+
+var multi = function(){
+    var total = 0;
+    var argsArray = Array.prototype.slice.call(arguments);
+        argsArray.forEach(function(item){
+            total += item;
+        })
+
+    return total
+};
+var calc = curring(multi);
+calc(1,2)(3)(4,5,6);
+console.log(calc()); //空白调用时才真正计算
+```
 
 ## 关于 apply、call和bind的所有
 
@@ -501,26 +694,7 @@ function createFunction2() {
 }
 
 ```
-## 函数柯里化
 
-既然说到闭包的作用力有函数柯里化，那不仿让我们看看什么是函数柯里化。
-从概念上来说，柯里化是这么定义的的：
->柯里化（Currying），又称部分求值（Partial Evaluation），是把接受多个参数的函数变换成接受一个单一参数（最初函数的第一个参数）的函数，并且返回接受余下的参数而且返回结果的新函数的技术。
-
-函数柯里化的实现如下：
-```js
-function curry(fn) {
-  var args = [].slice.call(arguments);
-  return function() {
-    if(arguments.length === 0) {
-      return fn.apply(this, args);
-    }else{
-      Array.prototype.push.apply(args, arguments);
-      return arguments.callee;
-    }
-  }
-}
-```
 
 ## `setInterval`和`setTimeout`详解
 
@@ -630,11 +804,6 @@ cookie 一般都是由于用户访问页面而被创建的，可是并不是只�
 
 ### secure
 secure选项用来设置cookie只在确保安全的请求中才会发送。当请求是HTTPS或者其他安全协议时，包含 secure 选项的 cookie 才能被发送至服务器。
-
-
-
-
-## 关于各种类型转换的方法
 
 
 ## iframe的使用场景
@@ -797,7 +966,7 @@ js的事件处理也是一个需要认真的理解的部分，推荐去阅读`�
 element.addEventListener(<event-name>,<callback>,<use-capture>)；
 element.removeEventListener(<event-name>, <callback>, <use-capture>);
 ```
-监听函数有两点需要主要，一个是第二个参数callback函数不能是匿名函数，另外一个就是<use-capture>这个参数是设置是否在“捕获”阶段监听。
+监听函数有两点需要主要，一个是 **第二个参数callback函数不能是匿名函数**，另外一个就是<use-capture>这个参数是设置是否在“捕获”阶段监听，默认为true。
 
 对于刚才不推荐的方法，我们也做一些了解。监听事件还可以用以下这些方法：
 1. `attachEvent`：IE9以下（不包括IE9）的MSIE中。
@@ -827,6 +996,68 @@ js事件有三个过程，这三个过程的每一个含义必须十分清楚，
 
 因为事件的冒泡机制，我们可以通过监听父级节点来实现监听子节点的功能。这就是事件代理。事件代理的好处很明显，想想这一个场景，一个ul列表一系类的li子节点，我需要实现点击li就触发的事件监听，使用事件代理让我们监听绑定在ul上，从而减少事件绑定，这样可以对性能进行优化。其次，万一哪天需要动态添加li节点，我们仍然可以处理事件。
 
+想想下面一个需求，我们想要在页面中动态的添加300个li元素，并给每一个li添加事件，即点击他就会有alert事件，如果是用事件代理怎么做呢？
+```js
+var ndContainer = document.getElementById('js-list');
+if (!ndContainer) return;
+for (let i = 0; i < 300; i++) {
+  const ndItem = document.createElement('li');
+  ndItem.innerText = i + 1;
+  ndContainer.appendChild(ndItem);
+}
+//事件代理
+ndContainer.addEventListener('click', function (e) {
+  const target = e.target;
+  if (target.tagName === 'LI') {
+      alert(target.innerHTML);
+  }
+});
+```
+然而其实这还不是最优解，如果我们的数据量变大，变成3000个元素，几乎可以肯定，页面体验不再流畅。
+
+出现卡顿感的主要原因是每次循环都会修改 DOM 结构，外加大循环执行时间过长，浏览器的渲染帧率（FPS）过低。而实际上，包含 30000 个 <li> 的长列表，用户不会立即看到全部，大部分甚至根本都不会看，那部分都没有渲染的必要，好在现代浏览器提供了 requestAnimationFrame API 来解决非常耗时的代码段对渲染的阻塞问题，该技术在 React 和 Angular 里面都有使用，如果你理解了 requestAnimationFrame 的原理，就很容易理解最新的 React Fiber 算法。
+
+综合上面的分析，可以从减少 DOM 操作次数、缩短循环时间两个方面减少主线程阻塞的时间。减少 DOM 操作次数的良方是 DocumentFragment；而缩短循环时间则需要考虑使用分治的思想把 30000 个 <li> 分批次插入到页面中，每次插入的时机是在页面重新渲染之前。
+
+完整代码如下：
+
+```js
+const total = 30000;
+const batchSize = 4; // 每批插入的节点次数，越大越卡
+const batchCount = total / batchSize; // 需要批量处理多少次
+let batchDone = 0;  // 已经完成的批处理个数
+
+function appendItems() {
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < batchSize; i++) {
+        const ndItem = document.createElement('li');
+        ndItem.innerText = (batchDone * batchSize) + i + 1;
+        fragment.appendChild(ndItem);
+    }
+
+    // 每次批处理只修改 1 次 DOM
+    ndContainer.appendChild(fragment);
+
+    batchDone += 1;
+    doBatchAppend();
+}
+
+function doBatchAppend() {
+    if (batchDone < batchCount) {
+        window.requestAnimationFrame(appendItems);
+    }
+}
+
+// kickoff
+doBatchAppend();
+
+ndContainer.addEventListener('click', function (e) {
+    const target = e.target;
+    if (target.tagName === 'LI') {
+        alert(target.innerHTML);
+    }
+});
+```
 ### 事件Event对象
 事件监听函数的第一个对象就是Event Object，这个对象里面包含了一些有用的属性或者方法,对以下的基本方法作用需要略知一二。
 
@@ -882,29 +1113,38 @@ function showNextImage() {
 
 - 立即执行
 > <script src = "a.js">
+
 > <script src = "b.js">
 
-顺序：保证先后顺序。解析：HTML 解析器遇到它们时，将阻塞（取停止解析），待脚本下载完成并执行后，继续解析标签之后的文档。这种就是我们最常见的一种方式，有时候我们也会把这样的执行放在body之下，这样就可以等页面加载完成后再去解析文档。
+顺序：保证先后顺序。
+
+解析：HTML 解析器遇到它们时，将阻塞（取停止解析），待脚本下载完成并执行后，继续解析标签之后的文档。这种就是我们最常见的一种方式，有时候我们也会把这样的执行放在body之下，这样就可以等页面加载完成后再去解析文档。
 
 - 推迟执行
 > <script defer src="a.js">
+
 > <script defer src="b.js">
 
-顺序：保证先后顺序。解析：HTML解析器遇到他们时，不阻塞（脚本将被异步下载），待文档解析完成后，执行脚本。
+顺序：保证先后顺序。
+
+解析：HTML解析器遇到他们时，不阻塞（脚本将被异步下载），待文档解析完成后，执行脚本。
 
 - 尽快执行
 > <script async src="a.js">
+
 > <script async src="b.js">
 
-顺序：不保证先后顺序。解析：HTML 解析器遇到它们时，不阻塞（脚本将被异步下载，一旦下载完成，立即执行它），并继续解析之后的文档。
+顺序：不保证先后顺序。
+
+解析：HTML 解析器遇到它们时，不阻塞（脚本将被异步下载，一旦下载完成，立即执行它），并继续解析之后的文档。
 
 有一张图可以帮助理解：
-[script解析顺序](https://pic4.zhimg.com/284aec5bb7f16b3ef4e7482110c5ddbb_b.jpg)
+![script解析顺序](https://pic4.zhimg.com/284aec5bb7f16b3ef4e7482110c5ddbb_b.jpg)
 
 
 
 ## 对前端模块化的理解？
-> 推荐去直接浏览黄玄的`JavaScript模块化七日谈`
+> **强烈推荐去直接浏览黄玄的`JavaScript模块化七日谈`**
 
 在说到前端模块化之前，让我们想一想为什么前端需要模块化。在以前的js代码中，我们可能是这么写的；
 ```js
@@ -1013,7 +1253,7 @@ $ browserify main.js -o bundle.js --debug
 最后的最后，就是我们的王者归来，ES6的`import`。通过语言层面上的规定，js可以说真正实现了模块化机制。关于import的更多机制，可以参考我的[all-about-ES6](,/all-about-ES6.md)
 
 
-[关于js模块化方案](http://upload-images.jianshu.io/upload_images/4971047-7f34b4f50e232341.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+！[关于js模块化方案](http://upload-images.jianshu.io/upload_images/4971047-7f34b4f50e232341.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 
@@ -1026,10 +1266,12 @@ $ browserify main.js -o bundle.js --debug
 我认为任何抛开了性能瓶颈去谈优化都是不现实的，我们首先需要了解的是一个网页的生成过程。通常来说，网页的加载生成过程，可以分为以下几步：
 1. 解析HTML结构，将HTML代码解析成DOM树
 2. 在解析的过程中，如遇到样式表或者图片就会发起另外请求异步加载，如遇到外部脚本就，html文档解析暂停，等js文件加载并解析完后继续解析
-3. 样式表一旦下载完毕，就会生成CSS Rule Tree
-3. 结合DOM Tree 和CSS Rule True，生成一棵渲染树（包含每个节点的视觉信息）
+3. 样式表一旦下载完毕，就会生成CSSOM
+3. 结合DOM Tree 和CSSOM，生成一棵渲染树（包含每个节点的视觉信息）
 4. 生成布局（layout），即将所有渲染树的所有节点进行平面合成
 5. 将布局绘制（paint）在屏幕上
+
+![网页生成过程](http://www.ruanyifeng.com/blogimg/asset/2015/bg2015091502.png)
 
 网页生成的时候，至少会渲染一次。用户访问的过程中，还会不断重新渲染。但是如果我们进行`修改DOM`，`修改样式表`，或者添加`用户时间`，就会触发重新生成布局和重新绘制。我们可以用chrome的Timeline面板来很全面的分析各个阶段的耗时，包括loading，scripting，rendering，和painting
 [TimeLine面板](http://www.ruanyifeng.com/blogimg/asset/2015/bg2015091515.png)
@@ -1104,7 +1346,6 @@ const blog = (location, callback) => {
 
 现在浏览器对于缓存的利用也是提升性能优化的一个重要环节，关于这方面可以参考关于缓存的讲解。
 
-### 合理安排请求顺序
 
 ### 关于脚本执行和渲染的优化
 
@@ -1127,6 +1368,8 @@ const blog = (location, callback) => {
 
 
 ## 参考链接：
+- [破解前端面试（80% 应聘者不及格系列）：从 DOM 说起](https://zhuanlan.zhihu.com/p/26420034)
+- [闭包垃圾回收机制](http://www.cnblogs.com/zichi/p/4568756.html)
 - [使用原生JavaScript实现数据绑定](http://www.html-js.com/article/A-day-to-learn-JavaScript-using-the-native-JavaScript-data-binding)
 - [深入浅出妙用 Javascript 中 apply、call、bind](http://web.jobbole.com/83642/)
 - [移动 H5（PC Web）前端性能优化指南](https://zhuanlan.zhihu.com/p/25176904)
