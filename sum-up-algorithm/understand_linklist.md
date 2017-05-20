@@ -121,6 +121,7 @@ function mergeTwoLists(l1, l2) {
       break;
     }
   }
+  return head.next;
 }
 ```
 #### 合并k个sort的链表 LeetCode[23]
@@ -155,7 +156,7 @@ function mergeTwoList(l1,l2){
     }
     curent = curent.next;
   }
-  curent.next = l1||l2||[];
+  curent.next = l1||l2||null;
 
   return newHead.next;
 }

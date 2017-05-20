@@ -63,7 +63,7 @@ console.assert(scope.counter === 2);
 
 我们可以把以前的`$digest`稍作修改，添加一个`$dirty`变量，函数改为`$$digestOnce`,让 `$digest`函数不断执行`$$digestOnce`，一直到所有`$watch`不再改变。
 
-```js
+```java
 Scope.prototype.$$digestOnce = function() {
   var self  = this;
   var dirty;
@@ -78,7 +78,6 @@ Scope.prototype.$$digestOnce = function() {
   });
   return dirty;
 
-
 Scope.prototype.$digest = function() {
   var dirty;
   do {
@@ -86,12 +85,10 @@ Scope.prototype.$digest = function() {
   } while (dirty);
 };
 ```
-
 现在，任何一个watchEvent事件都会至少触发两次digestOnce函数。这就达到了每个scope都改变的目的。除此之外，对于类似数组和对象的值的变化，angular本身还用到trueValue的标签来判断是否执行数值检查，如果使用数值检查，就会对scope上绑定的对象做一次深拷贝，一次检查每个值是否改变。
 
 理解了`$digest`和`$watch`,我们下面来研究一下`$apply`,`$apply`的实现方式其实很简单，
 ```js
-
 Scope.prototype.$apply = function(expr) {
   try {
     return this.$eval(expr);
@@ -160,3 +157,11 @@ angular.module('myApp', []).controller('MessageController', function ( $scope ) 
 - 4，执行directive力的contr
 - 5，执行directivel里的pre link
 - 6，执行directive里的pos tlink
+
+
+## angular里的provider
+- value就是一个简单的可注入的值
+- service是一个可注入的构造器
+- factory是一个可注入的方法
+- decorator可以修改或封装其他的供应商，当然除了constant
+- provider是一个可配置的factory

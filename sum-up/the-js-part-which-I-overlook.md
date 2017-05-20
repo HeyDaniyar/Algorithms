@@ -175,7 +175,7 @@ console.log(String.prototype);  //=> [String: '']
 
 在js中，所有对象都有一个内置的[[Prototype]],用来指向创造他的“父类”的prototy。因为在ES5之前没有标准的方法访问这个内置属性，所以大多数浏览器都支持通过`__proto__`来访问。ES5中有了对于这个内置属性标准的Get方法`Object.getPrototypeOf()`
 
-刚已经提到了，`__proto__`指向创造他的“父类”的prototype，那谁是创造它的父类？对，就是构造函数。所以当我们在进行一个`new`操作的时候，js的引擎还帮我们做了这些事情：
+刚已经提到了，`__proto__`指向创造他的“父类”的`prototype`，那谁是创造它的父类？对，就是构造函数。所以当我们在进行一个`new`操作的时候，js的引擎还帮我们做了这些事情：
 
 ```js
 const a= new Foo();

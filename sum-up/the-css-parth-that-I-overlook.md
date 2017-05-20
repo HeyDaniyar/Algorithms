@@ -628,6 +628,8 @@ div {
 
 #### if条件语句，while语句，for循环，自定义函数
 
+## 设置如下的定位模式
+![css定位](./imgs/css定位1.png)
 
 ## 参考资料
 - [10 分钟理解 BFC 原理](https://zhuanlan.zhihu.com/p/25321647)
