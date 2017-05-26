@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|116|[Populating Next Right Pointers in Each Node](https://leetcode.com/problems/populating-next-right-pointers-in-each-node)|[Java](./leetcode/116_jav.md)
 |64|[Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/)|[Java](./leetcode/64_minimum_path_sum_java.md)|Medium|DP|
 |491|[Increasing Subsequences](https://leetcode.com/problems/increasing-subsequences)|[Java](./leetcode/491_increasing_subsequeces_java.md)|Medium|Backtracking|
 |77|[Combinations](https://leetcode.com/problems/combinations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
