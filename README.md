@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|284|[Peeking Iterator](https://leetcode.com/problems/peeking-iterator)|[Java](./leetcode/284_peeking_iterator_java.md)|Medium|Design, Iterator|
 |376|[Wiggle Subsequence](https://leetcode.com/problems/wiggle-subsequence)|[Java](./leetcode/376_wiggle_subsequence_java.md)|Medium|Array, Subsequence|
 |74|[Search a sorted 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix)|[Java](./leetcode/74_seach_a_2d_matrix_java.md)|Medium|Matrix, Array|
 |116|[Populating Next Right Pointers in Each Node](https://leetcode.com/problems/populating-next-right-pointers-in-each-node)|[Java](./leetcode/116_populating_next_right_pointers_in_each_node_java.md)|Medium|DFS|
