@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|74|[Search a sorted 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix)|[Java](./leetcode/74_seach_a_2d_matrix_java.md)|Medium|Matrix, Array|
 |116|[Populating Next Right Pointers in Each Node](https://leetcode.com/problems/populating-next-right-pointers-in-each-node)|[Java](./leetcode/116_populating_next_right_pointers_in_each_node_java.md)|Medium|DFS|
 |64|[Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/)|[Java](./leetcode/64_minimum_path_sum_java.md)|Medium|DP|
 |491|[Increasing Subsequences](https://leetcode.com/problems/increasing-subsequences)|[Java](./leetcode/491_increasing_subsequeces_java.md)|Medium|Backtracking|
