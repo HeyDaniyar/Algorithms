@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|395|[Longest Substring K Repeated](https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters)|[Java](./leetcode/395_longest_substring_with_at_least_k_repeating_characters_java.md)|Medium|D & Q|
 |78|[Subsets](https://leetcode.com/problems/subsets)|[Java](./leetcode/78_subsets_java.md)|Medium|Backtracking|
 |90|[Subsets II](https://leetcode.com/problems/subsets-ii)|[Java](./leetcode/90_subsets_II_java.md)|Medium|Backtracking|
 |284|[Peeking Iterator](https://leetcode.com/problems/peeking-iterator)|[Java](./leetcode/284_peeking_iterator_java.md)|Medium|Design, Iterator|
