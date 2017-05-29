@@ -6,6 +6,8 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|78|[Subsets](https://leetcode.com/problems/subsets)|[Java](./leetcode/78_subsets_java.md)|Medium|Backtracking|
+|90|[Subsets II](https://leetcode.com/problems/subsets-ii)|[Java](./leetcode/90_subsets_II_java.md)|Medium|Backtracking|
 |284|[Peeking Iterator](https://leetcode.com/problems/peeking-iterator)|[Java](./leetcode/284_peeking_iterator_java.md)|Medium|Design, Iterator|
 |376|[Wiggle Subsequence](https://leetcode.com/problems/wiggle-subsequence)|[Java](./leetcode/376_wiggle_subsequence_java.md)|Medium|Array, Subsequence|
 |74|[Search a sorted 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix)|[Java](./leetcode/74_seach_a_2d_matrix_java.md)|Medium|Matrix, Array|
