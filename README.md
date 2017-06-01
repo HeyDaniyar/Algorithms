@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|200|[Number of Islands](https://leetcode.com/problems/number-of-islands)|[Java](./leetcode/200_number_of_islands_java.md)|Medium|DFS|
 |103|[Binary Tree Zigzag](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal)|[Java](./leetcode/103_binary_tree_zigzag_traversal_order_java.md)|Medium|Binary Tree, Traversal|
 |337|[House Robber III](https://leetcode.com/problems/house-robber-iii)|[Java](./leetcode/337_house_robber_III_java.md)|Medium|Robber, Binary Tree|
 |213|[House Robber II](https://leetcode.com/problems/house-robber-ii)|[Java](./leetcode/213_house_robber_II_java.md)|Medium|Circular Rob|
