@@ -12,8 +12,8 @@ public class Solution {
 ```
 
 ## Analysis 
-This idea of this solution is pretty straightforward.
-We know if we rob a `node`, we cannot rob it's direct children (`node.left` && `node.right`)
-Therefore, we use recursion and return max of robbing the root or not
-Since it will cover all situations, we guarantee our algorithm works
+This idea of this solution is pretty straightforward.  
+We know if we rob a `node`, we cannot rob it's direct children (`node.left` && `node.right`)  
+Therefore, we use recursion and return max of robbing the root or not  
+Since it will cover all situations, we guarantee our algorithm works  
 Beauty of Recursion! 

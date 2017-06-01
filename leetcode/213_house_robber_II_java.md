@@ -20,7 +20,7 @@ public class Solution {
 ```
 
 ## Analysis 
-We divide this robbing circular houses problem to robbing regular houses.
-We first modify our regular `rob` method and add `s` (start) and `e`(end) parameters.
-Then in main method, we return the max value of robbing first house or robbing second house.
-Those two cases will cover all situations, hence we can guarantee our algorithm works.
+We divide this robbing circular houses problem to robbing regular houses.  
+We first modify our regular `rob` method and add `s` (start) and `e`(end) parameters.  
+Then in main method, we return the max value of robbing first house or robbing second house.  
+Those two cases will cover all situations, hence we can guarantee our algorithm works.  
