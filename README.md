@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|606|[Construct String from Binary Tree](https://leetcode.com/problems/construct-string-from-binary-tree)|[Java](./leetcode/606_construct_string_from_binary_tree_java.md)|Easy|Binary Tree, String| 
 |605|[Can Place Flowers](https://leetcode.com/problems/can-place-flowers)|[Java](./leetcode/605_can_place_flowers_java.md)|Easy|Array|Duplicates|
 |609|[Find Duplicate File](https://leetcode.com/problems/find-duplicate-file-in-system)|[Java](./leetcode/609_find_duplicate_file_in_system_java.md)|Medium|HashTable, String|
 |200|[Number of Islands](https://leetcode.com/problems/number-of-islands)|[Java](./leetcode/200_number_of_islands_java.md)|Medium|DFS|
