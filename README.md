@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|605|[Can Place Flowers](https://leetcode.com/problems/can-place-flowers)|[Java](./leetcode/605_can_place_flowers_java.md)|Easy|Array|Duplicates|
 |609|[Find Duplicate File](https://leetcode.com/problems/find-duplicate-file-in-system)|[Java](./leetcode/609_find_duplicate_file_in_system_java.md)|Medium|HashTable, String|
 |200|[Number of Islands](https://leetcode.com/problems/number-of-islands)|[Java](./leetcode/200_number_of_islands_java.md)|Medium|DFS|
 |103|[Binary Tree Zigzag](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal)|[Java](./leetcode/103_binary_tree_zigzag_traversal_order_java.md)|Medium|Binary Tree, Traversal|
