@@ -6,6 +6,19 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|200|[Number of Islands](https://leetcode.com/problems/number-of-islands)|[Java](./leetcode/200_number_of_islands_java.md)|Medium|DFS|
+|103|[Binary Tree Zigzag](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal)|[Java](./leetcode/103_binary_tree_zigzag_traversal_order_java.md)|Medium|Binary Tree, Traversal|
+|337|[House Robber III](https://leetcode.com/problems/house-robber-iii)|[Java](./leetcode/337_house_robber_III_java.md)|Medium|Robber, Binary Tree|
+|213|[House Robber II](https://leetcode.com/problems/house-robber-ii)|[Java](./leetcode/213_house_robber_II_java.md)|Medium|Circular Rob|
+|198|[House Robber](https://leetcode.com/problems/house-robber)|[Java](./leetcode/198_house_robber_java.md)|Easy|DP, Robber|
+|395|[Longest Substring K Repeated](https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters)|[Java](./leetcode/395_longest_substring_with_at_least_k_repeating_characters_java.md)|Medium|D & Q|
+|78|[Subsets](https://leetcode.com/problems/subsets)|[Java](./leetcode/78_subsets_java.md)|Medium|Backtracking|
+|90|[Subsets II](https://leetcode.com/problems/subsets-ii)|[Java](./leetcode/90_subsets_II_java.md)|Medium|Backtracking|
+|284|[Peeking Iterator](https://leetcode.com/problems/peeking-iterator)|[Java](./leetcode/284_peeking_iterator_java.md)|Medium|Design, Iterator|
+|376|[Wiggle Subsequence](https://leetcode.com/problems/wiggle-subsequence)|[Java](./leetcode/376_wiggle_subsequence_java.md)|Medium|Array, Subsequence|
+|74|[Search a sorted 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix)|[Java](./leetcode/74_seach_a_2d_matrix_java.md)|Medium|Matrix, Array|
+|116|[Populating Next Right Pointers in Each Node](https://leetcode.com/problems/populating-next-right-pointers-in-each-node)|[Java](./leetcode/116_populating_next_right_pointers_in_each_node_java.md)|Medium|DFS|
+|64|[Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/)|[Java](./leetcode/64_minimum_path_sum_java.md)|Medium|DP|
 |491|[Increasing Subsequences](https://leetcode.com/problems/increasing-subsequences)|[Java](./leetcode/491_increasing_subsequeces_java.md)|Medium|Backtracking|
 |77|[Combinations](https://leetcode.com/problems/combinations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
 |46|[Permutations](https://leetcode.com/problems/permutations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
