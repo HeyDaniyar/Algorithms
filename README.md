@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|86|[Partition List](https://leetcode.com/problems/partition-list)|[Java](./leetcode/86_partition_list_java.md)|Medium|ListNode|
 |263|[Ugly Number](https://leetcode.com/problems/ugly-number)|[Java](./leetcode/263_ugly_number_java.md)|Easy|Number|    
 |264|[Ugly Number II](https://leetcode.com/problems/ugly-number-ii)|[Java](./leetcode/264_ugly_number_II_java.md)|Medium|Number|
 |33|[Search in Rotates Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array)|[Java](./leetcode/search_in_rotated_sorted_array_java.md)|Medium|Binary Search|
