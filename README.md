@@ -10,7 +10,8 @@
 |86|[Partition List](https://leetcode.com/problems/partition-list)|[Java](./leetcode/86_partition_list_java.md)|Medium|ListNode|
 |263|[Ugly Number](https://leetcode.com/problems/ugly-number)|[Java](./leetcode/263_ugly_number_java.md)|Easy|Number|    
 |264|[Ugly Number II](https://leetcode.com/problems/ugly-number-ii)|[Java](./leetcode/264_ugly_number_II_java.md)|Medium|Number|
-|33|[Search in Rotates Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array)|[Java](./leetcode/search_in_rotated_sorted_array_java.md)|Medium|Binary Search|
+|33|[Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array)|[Java](./leetcode/search_in_rotated_sorted_array_java.md)|Medium|Binary Search|
+|81|[Search in Rotated Sorted Array II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii)|[Java](./leetcode/81_search_in_rotated_sorted_array_II_java.md)|Medium|Binary Search|
 |606|[Construct String from Binary Tree](https://leetcode.com/problems/construct-string-from-binary-tree)|[Java](./leetcode/606_construct_string_from_binary_tree_java.md)|Easy|Binary Tree, String| 
 |605|[Can Place Flowers](https://leetcode.com/problems/can-place-flowers)|[Java](./leetcode/605_can_place_flowers_java.md)|Easy|Array|Duplicates|
 |609|[Find Duplicate File](https://leetcode.com/problems/find-duplicate-file-in-system)|[Java](./leetcode/609_find_duplicate_file_in_system_java.md)|Medium|HashTable, String|
