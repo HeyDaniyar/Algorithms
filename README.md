@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|617|[Merge Two Binary Trees](https://leetcode.com/problems/merge-two-binary-trees)|[Java](./leetcode/617_merge_two_binary_trees_java.md)|Easy|Traversal, Binary Tree|
 |131|[Palindrome Partitioning](https://leetcode.com/problems/palindrome-partitioning)|[Java](./leetcode/131_palindrome_partitioning_java.md)|Medium|Backtracking, Palindrome|
 |86|[Partition List](https://leetcode.com/problems/partition-list)|[Java](./leetcode/86_partition_list_java.md)|Medium|ListNode|
 |263|[Ugly Number](https://leetcode.com/problems/ugly-number)|[Java](./leetcode/263_ugly_number_java.md)|Easy|Number|    
