@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|96|[Unique Binary Search Trees](https://leetcode.com/problems/unique-binary-search-trees)|[Java](./leetcode/96_unique_binary_search_trees_java.md)|Medium|D & Q, BST|
 |604|[Design Compressed String Iterator](https://leetcode.com/problems/design-compressed-string-iterator)|[Java](./leetcode/604_design_compressed_string_iterator_java.md)|Easy|Design, Iterator|
 |617|[Merge Two Binary Trees](https://leetcode.com/problems/merge-two-binary-trees)|[Java](./leetcode/617_merge_two_binary_trees_java.md)|Easy|Traversal, Binary Tree|
 |131|[Palindrome Partitioning](https://leetcode.com/problems/palindrome-partitioning)|[Java](./leetcode/131_palindrome_partitioning_java.md)|Medium|Backtracking, Palindrome|
