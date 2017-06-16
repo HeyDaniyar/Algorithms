@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|92|[Reverse Linked List](https://leetcode.com/problems/reverse-linked-list-ii)|[Java](./leetcode/92_reverse_linked_list_java.md)|Medium|Linked List|
 |209|[Minimal Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum)|[Java](./leetcode/mimimum_size_subarray_sum_java.md)|Medium|Two Pointers|
 |611|[Valid Triangle Number](https://leetcode.com/problems/valid-triangle-number)|[Java](./leetcode/611_valid_triangle_number_java.md)|Medium|Two Pointers|
 |522|[Longest Uncommon Subsequence II](https://leetcode.com/problems/longest-uncommon-subsequence-ii)|[Java](./leetcode/522_longest_uncommon_subsequence_ii_java.md)|Medium|String|
