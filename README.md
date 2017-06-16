@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|611|[Valid Triangle Number](https://leetcode.com/problems/valid-triangle-number)|[Java](./leetcode/611_valid_triangle_number_java.md)|Medium|Two Pointers|
 |522|[Longest Uncommon Subsequence II](https://leetcode.com/problems/longest-uncommon-subsequence-ii)|[Java](./leetcode/522_longest_uncommon_subsequence_ii_java.md)|Medium|String|
 |521|[Longest Uncommon Subsequence I](https://leetcode.com/problems/longest-uncommon-subsequence-i/#/description)|[Java](./leetcode/521_longest_uncommon_subsequence_i_java.md)|Easy|String| 
 |392|[Is Subsequence](https://leetcode.com/problems/is-subsequence)|[Java](./leetcode/392_is_subsequence_java.md)|Medium|String|
