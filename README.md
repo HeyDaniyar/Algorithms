@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|522|[Longest Uncommon Subsequence II](https://leetcode.com/problems/longest-uncommon-subsequence-ii)|[Java](./leetcode/522_longest_uncommon_subsequence_ii_java.md)|Medium|String|
 |521|[Longest Uncommon Subsequence I](https://leetcode.com/problems/longest-uncommon-subsequence-i/#/description)|[Java](./leetcode/521_longest_uncommon_subsequence_i_java.md)|Easy|String| 
 |392|[Is Subsequence](https://leetcode.com/problems/is-subsequence)|[Java](./leetcode/392_is_subsequence_java.md)|Medium|String|
 |96|[Unique Binary Search Trees](https://leetcode.com/problems/unique-binary-search-trees)|[Java](./leetcode/96_unique_binary_search_trees_java.md)|Medium|D & Q, BST|
