@@ -7,7 +7,7 @@ public class Solution {
         G[0] = G[1] = 1; //This is valid statement in java 
         for (int i = 2; i <= n; i++) {
             for (int j = 1; j <= i; j++) {
-                G[i] += G[j - 1] * G[i-j]; 
+                G[i] += G[j - 1] * G[i - j]; 
             }
         }
         return G[n];
