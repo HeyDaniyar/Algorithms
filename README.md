@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|187|[Repeated DNA Sequences](https://leetcode.com/problems/repeated-dna-sequences)|[Java](./leetcode/187_repeated_dna_subsequences_java.md)|Medium|HashSet|  
 |373|[Find K Pairs with Smallest Sum](https://leetcode.com/problems/find-k-pairs-with-smallest-sums)|[Java](./leetcode/373_find_k_pairs_with_smallest_sum_java.md)|Medium|Array, PriorityQueue|
 |206|[Reverse Linked List](https://leetcode.com/problems/reverse-linked-list)|[Java](leetcode/206_reverse_linked_list_java.md)|Easy|Linked List|  
 |92|[Reverse Linked List II](https://leetcode.com/problems/reverse-linked-list-ii)|[Java](./leetcode/92_reverse_linked_list_java.md)|Medium|Linked List|
