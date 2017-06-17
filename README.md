@@ -9,6 +9,7 @@
 |16|[3Sum Closest](https://leetcode.com/problems/3sum-closest/#/description)|[Java](./leetcode/16_3sum_closest_java.md)|Medium|Array, Binary Search|
 |187|[Repeated DNA Sequences](https://leetcode.com/problems/repeated-dna-sequences)|[Java](./leetcode/187_repeated_dna_subsequences_java.md)|Medium|HashSet|
 |373|[Find K Pairs with Smallest Sum](https://leetcode.com/problems/find-k-pairs-with-smallest-sums)|[Java](./leetcode/373_find_k_pairs_with_smallest_sum_java.md)|Medium|Array, PriorityQueue|
+|141|[Linked List Cycle](https://leetcode.com/problems/linked-list-cycle)|[Java](./leetcode/141_linked_list_cycle_i_java.md)|Easy|Linked List, Two Pointers|
 |206|[Reverse Linked List](https://leetcode.com/problems/reverse-linked-list)|[Java](leetcode/206_reverse_linked_list_java.md)|Easy|Linked List|  
 |92|[Reverse Linked List II](https://leetcode.com/problems/reverse-linked-list-ii)|[Java](./leetcode/92_reverse_linked_list_java.md)|Medium|Linked List|
 |209|[Minimal Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum)|[Java](./leetcode/mimimum_size_subarray_sum_java.md)|Medium|Two Pointers|
