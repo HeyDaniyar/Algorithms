@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|624|[Maximum Distance in Arrays](https://leetcode.com/problems/maximum-distance-in-arrays/#/description)|[Java](./leetcode/624_maximum_distance_in_arrays_java.md)|Easy|Array|
 |236|[LCA Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree)|[Java](./leetcode/236_lowest_common_ancestor_of_binary_tree_java.md)|Medium|Binary Tree|
 |16|[3Sum Closest](https://leetcode.com/problems/3sum-closest/#/description)|[Java](./leetcode/16_3sum_closest_java.md)|Medium|Array, Binary Search|
 |187|[Repeated DNA Sequences](https://leetcode.com/problems/repeated-dna-sequences)|[Java](./leetcode/187_repeated_dna_subsequences_java.md)|Medium|HashSet|
@@ -14,7 +15,7 @@
 |141|[Linked List Cycle](https://leetcode.com/problems/linked-list-cycle)|[Java](./leetcode/141_linked_list_cycle_i_java.md)|Easy|Linked List, Two Pointers|
 |206|[Reverse Linked List](https://leetcode.com/problems/reverse-linked-list)|[Java](leetcode/206_reverse_linked_list_java.md)|Easy|Linked List|  
 |92|[Reverse Linked List II](https://leetcode.com/problems/reverse-linked-list-ii)|[Java](./leetcode/92_reverse_linked_list_java.md)|Medium|Linked List|
-|209|[Minimal Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum)|[Java](./leetcode/mimimum_size_subarray_sum_java.md)|Medium|Two Pointers|
+|209|[Minimal Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum)|[Java](./leetcode/209_mimimum_size_subarray_sum_java.md)|Medium|Two Pointers|
 |611|[Valid Triangle Number](https://leetcode.com/problems/valid-triangle-number)|[Java](./leetcode/611_valid_triangle_number_java.md)|Medium|Two Pointers|
 |522|[Longest Uncommon Subsequence II](https://leetcode.com/problems/longest-uncommon-subsequence-ii)|[Java](./leetcode/522_longest_uncommon_subsequence_ii_java.md)|Medium|String|
 |521|[Longest Uncommon Subsequence I](https://leetcode.com/problems/longest-uncommon-subsequence-i/#/description)|[Java](./leetcode/521_longest_uncommon_subsequence_i_java.md)|Easy|String| 
@@ -49,9 +50,9 @@
 |77|[Combinations](https://leetcode.com/problems/combinations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
 |46|[Permutations](https://leetcode.com/problems/permutations)|[Java](./leetcode/46_permutations_java.md)|Medium|Backtracking|
 |47|[Permutations II](https://leetcode.com/problems/permutations-ii)|[Java](./leetcode/47_permutations_II_java.md)|Medium|Backtracking|
-|394|[Decode String](https://leetcode.com/problems/decode-string)|[Java](./leetcode/394_decode_string_medium.md)|Medium|Stack, StringBuilder| 
+|394|[Decode String](https://leetcode.com/problems/decode-string)|[Java](./leetcode/394_decode_string_medium_java.md)|Medium|Stack, StringBuilder| 
 |328|[Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list)|[Java](./leetcode/328_odd_even_linked_list_leetcode.md)|Medium|ListNode|
-|566|[Reshape the Matrix](https://leetcode.com/problems/reshape-the-matrix)|[Java](./leetcode/easy_556_reshape_the_matrix.md)|Easy|Matrix|
+|566|[Reshape the Matrix](https://leetcode.com/problems/reshape-the-matrix)|[Java](./leetcode/566_reshape_the_matrix_java.md)|Easy|Matrix|
 |1|[Two Sum](https://leetcode.com/problems/two-sum/)| [JavaScript](./leetcode/twoSum-leetcode.js)|Easy|
 |3|[Longest SubString Without Repeating Characters](https://leetcode.com/problems/longest-subString-without-repeating-characters/?tab=Description)|[JavaScript](./leetcode/3-longestSubStringWithoutRepeatingCharacters-leetcode.md)|Medium||Hash String|
 |6|[ZigZag Conversion](https://leetcode.com/problems/zigzag-conversion/)| [JavaScript](./leetcode/06-zig-zag-leetcode.js)|Easy|
