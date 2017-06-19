@@ -6,6 +6,7 @@
 ### leetcode
 | # | Title | Solution | Difficulty | Tag |
 |---| ----- | :--------: | :----------: | :---: |
+|55|[Jump Game](https://leetcode.com/problems/jump-game/#/description)|[Java](./leetcode/55_jump_game_java.md)|Medium|Array|
 |624|[Maximum Distance in Arrays](https://leetcode.com/problems/maximum-distance-in-arrays/#/description)|[Java](./leetcode/624_maximum_distance_in_arrays_java.md)|Easy|Array|
 |236|[LCA Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree)|[Java](./leetcode/236_lowest_common_ancestor_of_binary_tree_java.md)|Medium|Binary Tree|
 |16|[3Sum Closest](https://leetcode.com/problems/3sum-closest/#/description)|[Java](./leetcode/16_3sum_closest_java.md)|Medium|Array, Binary Search|
